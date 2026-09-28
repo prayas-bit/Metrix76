@@ -163,3 +163,43 @@ export interface DashboardData {
   technician_work_queue: TestReportSummary[];
   approver_work_queue: TestReportSummary[];
 }
+
+export interface TechnicalChecklist {
+  level_indicator_present?: boolean;
+  zero_setting_operative?: boolean;
+  tare_device_operative?: boolean;
+  security_sealing_intact?: boolean;
+  audit_counter_value?: string;
+  notes?: string | null;
+}
+
+export interface CreateReportDraftPayload {
+  instrument_id: string;
+  reference_standard_id: string;
+  ambient_temperature_celsius: number;
+  relative_humidity_pct: number;
+  atmospheric_pressure_hpa?: number;
+  technical_checklist: TechnicalChecklist;
+}
+
+export interface ReportObservationInput {
+  test_type: TestType;
+  direction: TestDirection;
+  sequence_order: number;
+  load_applied: number;
+  indication_observed: number;
+  delta_load: number;
+  position_tag?: string;
+  run_cycle?: number;
+}
+
+export interface BatchObservationPayload {
+  report_id: string;
+  observations: ReportObservationInput[];
+}
+
+export interface ReportSubmissionResult {
+  report_id: string;
+  status: ReportStatus;
+  message: string;
+}
