@@ -13,8 +13,8 @@ on:
       - '.github/workflows/backend-ci.yml'
 
 jobs:
-  backend-metrology-tests:
-    name: OIML R 76 Metrology Engine & API Validation
+  backend-lint-and-test:
+    name: Backend Lint, Metrology Tests & Validation
     runs-on: ubuntu-latest
 
     defaults:
@@ -50,6 +50,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Metrology Unit & Compliance Test Suite
+      - name: Python Syntax & Linting Checks
+        run: |
+          # Stop the build if there are Python syntax errors or undefined names
+          flake8 app/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all other warnings as non-fatal but reports them
+          flake8 app/ tests/ --count --exit-zero --max-complexity=15 --max-line-length=120 --statistics
+
+      - name: Execute Complete OIML R 76 Metrology & Document Test Suite
         run: |
           pytest tests/ -v --tb=short
