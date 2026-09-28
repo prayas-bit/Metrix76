@@ -22,6 +22,11 @@ from app.schemas.metrology import (
     TareZeroEvaluationResponse,
     SanityCheckResult
 )
+from app.schemas.integrity import (
+    IntegritySeal,
+    IntegrityVerifyRequest,
+    IntegrityVerifyResponse
+)
 
 __all__ = [
     "AccuracyClass",
@@ -42,5 +47,8 @@ __all__ = [
     "ZeroSettingInput",
     "TareBalancingInput",
     "TareZeroEvaluationResponse",
-    "SanityCheckResult"
+    "SanityCheckResult",
+    "IntegritySeal",
+    "IntegrityVerifyRequest",
+    "IntegrityVerifyResponse"
 ]
