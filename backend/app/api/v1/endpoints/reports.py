@@ -1,13 +1,20 @@
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, HTTPException, Query, Response, status
 from datetime import datetime, date, timedelta
-from typing import List, Optional
+from typing import Dict, List, Optional
+
+from app.api.v1.endpoints.instruments import INSTRUMENTS_DB
+from app.api.v1.endpoints.reference_standards import STANDARDS_DB
 from app.schemas.report import (
+    BatchObservationPayload,
+    ReportSubmissionResponse,
+    TestObservationRowPayload,
+    TestReportCreate,
     TestReportSummary,
     TestReportDetail,
     PublicVerificationResponse,
     ReportStatus,
     EnvironmentalConditions,
-    TechnicalChecklist
+    TechnicalChecklist,
 )
 from app.schemas.instrument import InstrumentOut
 from app.schemas.reference_standard import ReferenceStandardOut
@@ -15,6 +22,8 @@ from app.schemas.metrology import AccuracyClass, TestDirection, ComplianceVerdic
 from app.services.document.crypto import CryptoAuditService
 
 router = APIRouter()
+
+REPORT_OBSERVATIONS_DB: Dict[str, List[TestObservationRowPayload]] = {}
 
 # Mock Report DB for Archive & Verification
 SAMPLE_INSTRUMENT = InstrumentOut(
@@ -106,6 +115,120 @@ REPORTS_DB: List[TestReportDetail] = [
         updated_at=datetime.now() - timedelta(hours=4)
     )
 ]
+
+
+def _get_report_or_404(report_id: str) -> TestReportDetail:
+    rep = next((r for r in REPORTS_DB if r.id == report_id), None)
+    if not rep:
+        raise HTTPException(status_code=404, detail="Test report not found")
+    return rep
+
+
+@router.post("/draft", response_model=TestReportDetail, status_code=status.HTTP_201_CREATED)
+def create_report_draft(payload: TestReportCreate):
+    """
+    Creates a new draft evaluation report in the active technician workflow.
+    """
+    instrument = next((item for item in INSTRUMENTS_DB if item.id == payload.instrument_id), None)
+    if not instrument:
+        raise HTTPException(status_code=404, detail="Instrument not found")
+
+    standard = next((item for item in STANDARDS_DB if item.id == payload.reference_standard_id), None)
+    if not standard:
+        raise HTTPException(status_code=404, detail="Reference standard not found")
+
+    if not standard.is_active or standard.expiry_date < date.today():
+        raise HTTPException(status_code=422, detail="Selected reference standard is expired or inactive")
+
+    now = datetime.now()
+    report_id = f"rep-{len(REPORTS_DB) + 101:03d}"
+    draft = TestReportDetail(
+        id=report_id,
+        report_number=f"OIML-{now.year}-TR-{len(REPORTS_DB) + 1:04d}",
+        attempt_number=1,
+        status=ReportStatus.DRAFT,
+        standard_version="OIML R 76-1:2006",
+        instrument=instrument,
+        reference_standard=standard,
+        environment=EnvironmentalConditions(
+            ambient_temperature_celsius=payload.ambient_temperature_celsius,
+            relative_humidity_pct=payload.relative_humidity_pct,
+            atmospheric_pressure_hpa=payload.atmospheric_pressure_hpa,
+        ),
+        technical_checklist=payload.technical_checklist,
+        overall_verdict=None,
+        rejection_reason=None,
+        sha256_hash=None,
+        pdf_storage_path=None,
+        docx_storage_path=None,
+        weighing_observations=[],
+        repeatability_results=[],
+        eccentricity_results=[],
+        conducted_by="Technician Draft",
+        approved_by=None,
+        approved_at=None,
+        created_at=now,
+        updated_at=now,
+    )
+    REPORTS_DB.append(draft)
+    REPORT_OBSERVATIONS_DB.setdefault(report_id, [])
+    return draft
+
+
+@router.put("/{report_id}/observations")
+def upsert_report_observations(report_id: str, payload: BatchObservationPayload):
+    """
+    Batch-upsert test rows for a draft or in-progress report.
+    """
+    rep = _get_report_or_404(report_id)
+    if payload.report_id != report_id:
+        raise HTTPException(status_code=400, detail="Observation payload report_id must match the route report_id")
+
+    merged = {(
+        obs.test_type.value,
+        obs.direction.value,
+        obs.sequence_order,
+        obs.position_tag or "",
+        obs.run_cycle or 0,
+    ): obs for obs in REPORT_OBSERVATIONS_DB.get(report_id, [])}
+
+    for obs in payload.observations:
+        merged[(
+            obs.test_type.value,
+            obs.direction.value,
+            obs.sequence_order,
+            obs.position_tag or "",
+            obs.run_cycle or 0,
+        )] = obs
+
+    REPORT_OBSERVATIONS_DB[report_id] = list(merged.values())
+    rep.updated_at = datetime.now()
+    return {"report_id": report_id, "observations": REPORT_OBSERVATIONS_DB[report_id]}
+
+
+@router.post("/{report_id}/submit", response_model=ReportSubmissionResponse)
+def submit_report(report_id: str):
+    """
+    Validates mandatory report data and transitions the report to the approval queue.
+    """
+    rep = _get_report_or_404(report_id)
+
+    if not rep.instrument or not rep.reference_standard:
+        raise HTTPException(status_code=422, detail="Instrument and reference standard are required")
+
+    if rep.reference_standard.expiry_date < date.today() or not rep.reference_standard.is_active:
+        raise HTTPException(status_code=422, detail="Reference standard is not valid for submission")
+
+    if not REPORT_OBSERVATIONS_DB.get(report_id):
+        raise HTTPException(status_code=422, detail="At least one observation row is required before submission")
+
+    rep.status = ReportStatus.PENDING_APPROVAL
+    rep.updated_at = datetime.now()
+    return ReportSubmissionResponse(
+        report_id=rep.id,
+        status=rep.status,
+        message="Report submitted for approval successfully"
+    )
 
 @router.get("/archive", response_model=List[TestReportSummary])
 def search_archive(

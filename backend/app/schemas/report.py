@@ -4,6 +4,8 @@ from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 from app.schemas.metrology import (
     AccuracyClass,
+    TestDirection,
+    TestType,
     WeighingPointInput,
     WeighingEvaluationResult,
     RepeatabilitySeriesResult,
@@ -40,6 +42,25 @@ class TestReportCreate(BaseModel):
     relative_humidity_pct: float
     atmospheric_pressure_hpa: Optional[float] = 1013.25
     technical_checklist: TechnicalChecklist = TechnicalChecklist()
+
+class TestObservationRowPayload(BaseModel):
+    test_type: TestType = TestType.WEIGHING
+    direction: TestDirection = TestDirection.INCREASING
+    sequence_order: int = Field(1, ge=1)
+    load_applied: float
+    indication_observed: float
+    delta_load: float = 0.0
+    position_tag: Optional[str] = None
+    run_cycle: Optional[int] = None
+
+class BatchObservationPayload(BaseModel):
+    report_id: str
+    observations: List[TestObservationRowPayload]
+
+class ReportSubmissionResponse(BaseModel):
+    report_id: str
+    status: ReportStatus
+    message: str
 
 class VerificationAction(BaseModel):
     action: str # "APPROVE" or "REJECT"
