@@ -1,4 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { getRolesFromClaims, supabaseAnonKey, supabaseUrl } from '@/lib/supabaseClient';
 
 const protectedRoutes = [
   { prefix: '/evaluations', allowedRoles: ['TECHNICIAN', 'ADMIN'] },
@@ -6,54 +8,7 @@ const protectedRoutes = [
   { prefix: '/verify', allowedRoles: ['APPROVER', 'ADMIN'] },
 ] as const;
 
-function decodeJwtPayload(token?: string) {
-  if (!token) return null;
-
-  const parts = token.split('.');
-  if (parts.length < 2) return null;
-
-  const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-  const padded = payload.padEnd(Math.ceil(payload.length / 4) * 4, '=');
-
-  try {
-    return JSON.parse(Buffer.from(padded, 'base64').toString('utf-8'));
-  } catch {
-    return null;
-  }
-}
-
-function getCurrentRole(request: NextRequest): string | null {
-  const cookieCandidates = [
-    request.cookies.get('user-role')?.value,
-    request.cookies.get('role')?.value,
-    request.cookies.get('app-role')?.value,
-    request.cookies.get('sb-role')?.value,
-  ];
-
-  const explicitRole = cookieCandidates.find((value) => !!value && value.trim().length > 0);
-  if (explicitRole) return explicitRole.toUpperCase();
-
-  const accessToken =
-    request.cookies.get('sb-access-token')?.value ??
-    request.cookies.get('supabase-auth-token')?.value ??
-    request.cookies.get('access_token')?.value ??
-    request.cookies.get('sb-auth-token')?.value;
-
-  const claims = decodeJwtPayload(accessToken);
-  if (!claims) return null;
-
-  const roleFromToken =
-    claims.role ??
-    claims.user_role ??
-    claims.userRole ??
-    claims.app_metadata?.role ??
-    claims.user_metadata?.role ??
-    null;
-
-  return roleFromToken ? String(roleFromToken).toUpperCase() : null;
-}
-
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const route = protectedRoutes.find(({ prefix }) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 
@@ -61,16 +16,53 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const role = getCurrentRole(request);
-  const isAuthorized = !!role && route.allowedRoles.some((allowedRole) => allowedRole === role);
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        response = NextResponse.next({
+          request,
+        });
+        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+      },
+    },
+  });
+
+  // Verify server session securely using getUser() to avoid relying on untrusted/forged cookies
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    const redirectUrl = new URL('/', request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Extract roles from verified user claims (app_metadata, user_metadata, user.role)
+  const claims = {
+    role: user.role,
+    app_metadata: user.app_metadata,
+    user_metadata: user.user_metadata,
+  };
+  const verifiedRoles = getRolesFromClaims(claims);
+
+  const isAuthorized = route.allowedRoles.some((allowedRole) => verifiedRoles.includes(allowedRole));
 
   if (!isAuthorized) {
     const redirectUrl = new URL('/', request.url);
     return NextResponse.redirect(redirectUrl);
   }
 
-  return NextResponse.next();
+  return response;
 }
+
 
 export const config = {
   matcher: ['/evaluations/:path*', '/verification/:path*', '/verify/:path*'],

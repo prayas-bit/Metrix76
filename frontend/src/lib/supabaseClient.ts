@@ -18,20 +18,58 @@ function decodeJwtPayload(token?: string) {
   }
 }
 
+export function getRolesFromClaims(claims: Record<string, any> | null): string[] {
+  if (!claims) return [];
+
+  const rawRoles: unknown[] = [];
+  // Only server-controlled claims are trusted. user_metadata is user-writable and must NOT be used for roles.
+  const candidates = [
+    claims.role,
+    claims.roles,
+    claims.user_role,
+    claims.userRole,
+    claims.app_metadata?.role,
+    claims.app_metadata?.roles,
+  ];
+
+
+  for (const candidate of candidates) {
+    if (candidate === null || candidate === undefined) continue;
+    if (Array.isArray(candidate)) {
+      rawRoles.push(...candidate);
+    } else {
+      rawRoles.push(candidate);
+    }
+  }
+
+  const normalized: string[] = [];
+  for (const r of rawRoles) {
+    if (typeof r === 'string') {
+      const clean = r.trim().toUpperCase();
+      if (clean && !normalized.includes(clean)) {
+        normalized.push(clean);
+      }
+    }
+  }
+  return normalized;
+}
+
+export function normalizePrimaryRole(roles: string[]): string | null {
+  if (!roles || roles.length === 0) return null;
+  for (const priority of ['ADMIN', 'APPROVER', 'TECHNICIAN']) {
+    if (roles.includes(priority)) return priority;
+  }
+  return roles[0];
+}
+
 export function getRoleFromAccessToken(token?: string): string | null {
   const claims = decodeJwtPayload(token);
   if (!claims) return null;
 
-  const role =
-    claims.role ??
-    claims.user_role ??
-    claims.userRole ??
-    claims.app_metadata?.role ??
-    claims.user_metadata?.role ??
-    null;
-
-  return role ? String(role).toUpperCase() : null;
+  const roles = getRolesFromClaims(claims);
+  return normalizePrimaryRole(roles);
 }
+
 
 export function createSupabaseBrowserClient() {
   return createBrowserClient(supabaseUrl, supabaseAnonKey, {
