@@ -9,11 +9,13 @@ class AccuracyClass(str, Enum):
     CLASS_IIII = "CLASS_IIII"
 
 class TestDirection(str, Enum):
+    __test__ = False
     INCREASING = "INCREASING"
     DECREASING = "DECREASING"
     STATIC = "STATIC"
 
 class TestType(str, Enum):
+    __test__ = False
     WEIGHING = "WEIGHING"
     REPEATABILITY = "REPEATABILITY"
     ECCENTRICITY = "ECCENTRICITY"
