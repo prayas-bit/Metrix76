@@ -9,7 +9,10 @@ import {
   ReferenceStandard,
   Instrument,
   TestReportSummary,
-  SanityCheckResult
+  SanityCheckResult,
+  CreateReportDraftPayload,
+  BatchObservationPayload,
+  ReportSubmissionResult
 } from '@/types/metrology';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -103,7 +106,44 @@ export async function submitVerificationAction(
   return res.json();
 }
 
-// Module 6: Searchable Archive API
+// Module 6: Report CRUD & Searchable Archive API
+export async function createReportDraft(payload: CreateReportDraftPayload) {
+  const res = await fetch(`${API_BASE}/api/v1/reports/draft`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || 'Draft creation failed');
+  }
+  return res.json();
+}
+
+export async function upsertReportObservations(reportId: string, payload: BatchObservationPayload): Promise<{ report_id: string; observations: unknown[] }> {
+  const res = await fetch(`${API_BASE}/api/v1/reports/${reportId}/observations`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || 'Observation save failed');
+  }
+  return res.json();
+}
+
+export async function submitReportForReview(reportId: string): Promise<ReportSubmissionResult> {
+  const res = await fetch(`${API_BASE}/api/v1/reports/${reportId}/submit`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || 'Report submission failed');
+  }
+  return res.json();
+}
+
 export async function searchArchive(query?: string): Promise<TestReportSummary[]> {
   const url = query
     ? `${API_BASE}/api/v1/reports/archive?query=${encodeURIComponent(query)}`
