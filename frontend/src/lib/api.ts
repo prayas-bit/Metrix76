@@ -78,7 +78,13 @@ export async function evaluateEccentricity(
   return res.json();
 }
 
-// Module 5: Verification API
+// Module 5: Verification & Approver Review API
+export async function getReportDetail(reportId: string) {
+  const res = await fetch(`${API_BASE}/api/v1/reports/${reportId}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Report details lookup error: ${res.statusText}`);
+  return res.json();
+}
+
 export async function submitVerificationAction(
   reportId: string,
   action: 'APPROVE' | 'REJECT',
@@ -110,5 +116,18 @@ export async function searchArchive(query?: string): Promise<TestReportSummary[]
 export async function verifyPublicReport(reportId: string) {
   const res = await fetch(`${API_BASE}/api/v1/reports/verify/${reportId}`);
   if (!res.ok) throw new Error(`Verification lookup error: ${res.statusText}`);
+  return res.json();
+}
+
+// Attachments & Evidence Vault API
+export async function uploadAttachment(formData: FormData) {
+  const res = await fetch(`${API_BASE}/api/v1/attachments/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail || 'Attachment upload failed');
+  }
   return res.json();
 }
