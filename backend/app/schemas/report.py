@@ -19,9 +19,9 @@ class ReportStatus(str, Enum):
     REJECTED = "REJECTED"
 
 class EnvironmentalConditions(BaseModel):
-    ambient_temperature_celsius: float = Field(..., example=22.5)
-    relative_humidity_pct: float = Field(..., example=55.0)
-    atmospheric_pressure_hpa: Optional[float] = Field(1013.25, example=1013.25)
+    ambient_temperature_celsius: float = Field(..., json_schema_extra={"example": 22.5})
+    relative_humidity_pct: float = Field(..., json_schema_extra={"example": 55.0})
+    atmospheric_pressure_hpa: Optional[float] = Field(1013.25, json_schema_extra={"example": 1013.25})
     temp_min_allowed: Optional[float] = -10.0
     temp_max_allowed: Optional[float] = 40.0
 
