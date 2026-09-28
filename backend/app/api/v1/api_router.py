@@ -6,7 +6,8 @@ from app.api.v1.endpoints import (
     metrology,
     documents,
     verification,
-    reports
+    reports,
+    attachments
 )
 
 api_router = APIRouter()
@@ -18,3 +19,4 @@ api_router.include_router(metrology.router, prefix="/metrology", tags=["Metrolog
 api_router.include_router(documents.router, prefix="/documents", tags=["Document Generation Pipeline"])
 api_router.include_router(verification.router, prefix="/verification", tags=["Two-Man Verification (Module 5)"])
 api_router.include_router(reports.router, prefix="/reports", tags=["Searchable Archive & Verification (Module 6)"])
+api_router.include_router(attachments.router, prefix="/attachments", tags=["Evidence & Photographic Vault"])
