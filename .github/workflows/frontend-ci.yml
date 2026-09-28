@@ -2,19 +2,19 @@ name: Frontend CI (Next.js 15 & Metrology UI)
 
 on:
   push:
-    branches: [ main, staging, master ]
+    branches: [ main, staging, master, backend_dev, frontend_dev ]
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
   pull_request:
-    branches: [ main, staging, master ]
+    branches: [ main, staging, master, backend_dev, frontend_dev ]
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
 jobs:
-  frontend-build-check:
-    name: TypeScript Verification & Next.js Production Build
+  frontend-lint-and-build:
+    name: Frontend Typecheck, Lint & Next.js Production Build
     runs-on: ubuntu-latest
 
     defaults:
@@ -34,6 +34,9 @@ jobs:
 
       - name: Install Frontend Dependencies
         run: npm ci || npm install
+
+      - name: TypeScript Static Type Checking
+        run: npx tsc --noEmit
 
       - name: Compile and Validate Next.js Production Bundle
         run: npm run build
