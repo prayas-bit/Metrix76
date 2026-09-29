@@ -30,28 +30,28 @@ const CATEGORY_DEFINITIONS: {
   {
     type: 'NAMEPLATE',
     label: 'Nameplate & Markings',
-    badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
+    badgeColor: 'bg-ink-950 text-white border-ink-950',
     description: 'Displays Class, Max, Min, e, d, and serial number',
     required: true,
   },
   {
     type: 'LEAD_SEAL',
     label: 'Lead / Wire Tamper Seal',
-    badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+    badgeColor: 'bg-neutral-800 text-white border-neutral-800',
     description: 'Physical wire/lead seal protecting calibration pots',
     required: true,
   },
   {
     type: 'LEVEL_BUBBLE',
     label: 'Spirit Level / Bubble',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    badgeColor: 'bg-neutral-100 text-ink-900 border-editorial-border',
     description: 'Confirms platter is centered in reference position',
     required: true,
   },
   {
     type: 'OVERALL_FRONT',
     label: 'Overall Front / Receptor',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
+    badgeColor: 'bg-neutral-100 text-ink-900 border-editorial-border',
     description: 'Full load receptor and indicator configuration',
     required: false,
   },
@@ -72,7 +72,6 @@ export default function PhotoDropzone({
 
     const newAttachments: InstrumentAttachment[] = [];
     Array.from(files).forEach((file, index) => {
-      // Create local object URL for preview
       const previewUrl = URL.createObjectURL(file);
       newAttachments.push({
         id: `temp-${Date.now()}-${index}`,
@@ -100,7 +99,6 @@ export default function PhotoDropzone({
     onChange(attachments.filter((_, idx) => idx !== indexToRemove));
   };
 
-  // Check which mandatory categories have been uploaded
   const uploadedCategories = new Set(attachments.map((a) => a.attachment_type));
   const missingRequired = CATEGORY_DEFINITIONS.filter(
     (c) => c.required && !uploadedCategories.has(c.type)
@@ -110,7 +108,7 @@ export default function PhotoDropzone({
     <div className="space-y-4">
       {/* Category Selection Bar */}
       <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-700 block uppercase tracking-wider">
+        <label className="text-[10px] font-mono font-bold text-ink-500 block uppercase tracking-widest">
           1. Select Evidence Tag for Upload
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -123,23 +121,25 @@ export default function PhotoDropzone({
                 type="button"
                 disabled={disabled}
                 onClick={() => setSelectedCategory(cat.type)}
-                className={`p-2.5 rounded-xl border text-left transition-all relative ${
+                className={`p-3 border text-left transition-all relative ${
                   isSelected
-                    ? 'border-blue-600 bg-blue-50/70 shadow-xs'
-                    : 'border-slate-200 bg-white hover:bg-slate-50'
+                    ? 'border-ink-950 bg-ink-950 text-white shadow-editorial'
+                    : 'border-editorial-border bg-white text-ink-900 hover:border-ink-400'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-900 block truncate">
+                  <span className="text-xs font-bold font-mono tracking-tight block truncate">
                     {cat.label}
                   </span>
                   {isUploaded ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-white' : 'text-emerald-600'}`} />
                   ) : cat.required ? (
-                    <span className="text-[9px] font-bold text-rose-500 uppercase">Req</span>
+                    <span className={`text-[9px] font-mono font-bold uppercase ${isSelected ? 'text-neutral-300' : 'text-ink-500'}`}>Req</span>
                   ) : null}
                 </div>
-                <p className="text-[10px] text-slate-500 line-clamp-1 mt-0.5">{cat.description}</p>
+                <p className={`text-[10px] font-mono line-clamp-1 mt-1 ${isSelected ? 'text-neutral-300' : 'text-ink-400'}`}>
+                  {cat.description}
+                </p>
               </button>
             );
           })}
@@ -164,10 +164,10 @@ export default function PhotoDropzone({
         }}
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${
+        className={`border-2 border-dashed p-6 text-center transition-all cursor-pointer bg-white ${
           dragActive
-            ? 'border-blue-600 bg-blue-50/50 scale-[0.99]'
-            : 'border-slate-300 hover:border-blue-400 bg-slate-50/50 hover:bg-white'
+            ? 'border-ink-950 bg-alabaster-100 scale-[0.99]'
+            : 'border-editorial-border hover:border-ink-950'
         } ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
       >
         <input
@@ -180,33 +180,33 @@ export default function PhotoDropzone({
           onChange={(e) => handleFiles(e.target.files)}
         />
         <div className="flex flex-col items-center justify-center space-y-2">
-          <div className="p-3 bg-blue-100 text-blue-800 rounded-2xl shadow-xs">
-            <UploadCloud className="w-6 h-6" />
+          <div className="p-3 bg-ink-950 text-white shadow-editorial">
+            <UploadCloud className="w-5 h-5" />
           </div>
-          <div className="text-xs">
-            <span className="font-bold text-slate-800">Click to upload</span> or drag and drop
-            photographs
+          <div className="text-xs font-mono font-bold uppercase tracking-wider text-ink-950">
+            Click to upload or drag & drop photographs
           </div>
-          <p className="text-[11px] text-slate-500">
-            Target Category:{' '}
-            <span className="font-bold text-blue-800">
+          <p className="text-[11px] font-mono text-ink-500 uppercase">
+            TARGET EVIDENCE CATEGORY:{' '}
+            <span className="font-bold text-ink-950">
               {CATEGORY_DEFINITIONS.find((c) => c.type === selectedCategory)?.label}
             </span>{' '}
-            (JPEG, PNG, WebP up to 15MB)
+            (JPEG, PNG, WebP UP TO 15MB)
           </p>
         </div>
       </div>
 
       {/* Mandatory Category Check Banner */}
       {missingRequired.length > 0 && (
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-900">
-          <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+        <div className="p-4 bg-white border border-editorial-border shadow-editorial flex items-start gap-3 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 text-ink-950 shrink-0 mt-0.5" />
           <div>
-            <span className="font-bold">ISO/IEC 17025 Photographic Evidence Requirement:</span>
-            <p className="text-[11px] text-amber-800 mt-0.5">
+            <span className="font-bold uppercase tracking-wider text-ink-950">
+              ISO/IEC 17025 PHOTOGRAPHIC EVIDENCE REQUIREMENT:
+            </span>
+            <p className="text-[11px] text-ink-600 mt-1 uppercase">
               Missing mandatory verification photos:{' '}
-              {missingRequired.map((m) => m.label).join(', ')}. Please upload these before final
-              sign-off.
+              {missingRequired.map((m) => m.label).join(', ')}. Please upload before final sign-off.
             </p>
           </div>
         </div>
@@ -214,11 +214,11 @@ export default function PhotoDropzone({
 
       {/* Gallery / Staged Photos Grid */}
       {attachments.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-bold text-slate-700 uppercase tracking-wider">
-            <span>Uploaded Physical Evidence Vault ({attachments.length})</span>
-            <span className="text-[11px] text-slate-400 font-normal lowercase">
-              tamper-evident stage
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-xs font-mono font-bold text-ink-950 uppercase tracking-widest">
+            <span>UPLOADED EVIDENCE VAULT ({attachments.length})</span>
+            <span className="text-[10px] text-ink-400">
+              TAMPER-EVIDENT RECORD
             </span>
           </div>
 
@@ -228,9 +228,9 @@ export default function PhotoDropzone({
               return (
                 <div
                   key={att.id || idx}
-                  className="group relative rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col"
+                  className="group relative border border-editorial-border bg-white overflow-hidden shadow-editorial flex flex-col"
                 >
-                  <div className="h-28 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                  <div className="h-28 bg-alabaster-100 relative overflow-hidden flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={att.storage_path}
@@ -240,14 +240,14 @@ export default function PhotoDropzone({
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
-                    <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           setPreviewModalUrl(att.storage_path);
                         }}
-                        className="p-1.5 bg-white/90 rounded-lg text-slate-800 hover:bg-white text-xs font-semibold shadow-xs"
+                        className="p-1.5 bg-white text-ink-950 text-xs font-bold hover:bg-neutral-200"
                       >
                         <Eye className="w-3.5 h-3.5" />
                       </button>
@@ -258,7 +258,7 @@ export default function PhotoDropzone({
                             e.stopPropagation();
                             handleDelete(idx);
                           }}
-                          className="p-1.5 bg-rose-600 rounded-lg text-white hover:bg-rose-700 text-xs font-semibold shadow-xs"
+                          className="p-1.5 bg-ink-950 text-white hover:bg-rose-700 text-xs font-bold"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -268,13 +268,13 @@ export default function PhotoDropzone({
 
                   <div className="p-2 space-y-1">
                     <span
-                      className={`inline-block px-1.5 py-0.5 text-[9px] font-bold uppercase rounded border ${
-                        catDef?.badgeColor || 'bg-slate-100 text-slate-700 border-slate-200'
+                      className={`inline-block px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider ${
+                        catDef?.badgeColor || 'bg-neutral-100 text-ink-900 border border-editorial-border'
                       }`}
                     >
                       {catDef?.label || att.attachment_type}
                     </span>
-                    <p className="text-[10px] font-mono text-slate-600 truncate">
+                    <p className="text-[10px] font-mono text-ink-500 truncate">
                       {att.file_name || 'evidence_capture.jpg'}
                     </p>
                   </div>
