@@ -3,8 +3,8 @@ import { createServerClient } from '@supabase/ssr';
 import { getRolesFromClaims, supabaseAnonKey, supabaseUrl } from '@/lib/supabaseClient';
 
 const protectedRoutes = [
-  { prefix: '/evaluations', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
-  { prefix: '/verification', allowedRoles: ['APPROVER', 'ADMIN', 'TECHNICIAN'] },
+  { prefix: '/evaluations', allowedRoles: ['TECHNICIAN', 'ADMIN'] },
+  { prefix: '/verification', allowedRoles: ['APPROVER', 'ADMIN'] },
   { prefix: '/instruments', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
   { prefix: '/standards', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
   { prefix: '/repository', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
@@ -56,24 +56,26 @@ export async function middleware(request: NextRequest) {
       verifiedRoles = getRolesFromClaims(claims);
     }
   } catch {
-    // Supabase auth fallback
+    // Supabase auth failed
   }
 
-  // Check active role cookie if authenticated or set locally
+  // If unauthenticated, redirect to login page immediately
+  if (!isAuthenticated) {
+    const redirectUrl = new URL(`/login?redirect=${encodeURIComponent(pathname)}`, request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Determine effective roles strictly from server-verified claims
+  const effectiveRoles = [...verifiedRoles];
   const activeRoleCookie = request.cookies.get('oiml_active_role')?.value?.toUpperCase();
-  if (activeRoleCookie) {
-    if (!verifiedRoles.includes(activeRoleCookie)) {
-      verifiedRoles.push(activeRoleCookie);
+  if (activeRoleCookie && verifiedRoles.includes('ADMIN')) {
+    // Verified Admins can switch persona views
+    if (!effectiveRoles.includes(activeRoleCookie)) {
+      effectiveRoles.push(activeRoleCookie);
     }
   }
 
-  // If unauthenticated or no explicit role cookie, allow demo evaluation access
-  // across all Metrix76 modules so the pages can be inspected without forced auth redirects
-  if (!isAuthenticated && verifiedRoles.length === 0) {
-    verifiedRoles.push('TECHNICIAN', 'APPROVER', 'ADMIN');
-  }
-
-  const isAuthorized = route.allowedRoles.some((allowedRole) => verifiedRoles.includes(allowedRole));
+  const isAuthorized = route.allowedRoles.some((allowedRole) => effectiveRoles.includes(allowedRole));
 
   if (!isAuthorized) {
     const redirectUrl = new URL(`/login?unauthorized=true&required=${route.allowedRoles.join(',')}`, request.url);
