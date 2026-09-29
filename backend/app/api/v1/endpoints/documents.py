@@ -95,6 +95,22 @@ def _generate_and_return_pdf_response(report_id: str):
                 except Exception:
                     pass
 
+    # Check local filesystem cache
+    local_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "storage", "certificates")
+    local_file = os.path.join(local_dir, f"{report_id}.pdf")
+    if os.path.exists(local_file):
+        try:
+            with open(local_file, "rb") as f:
+                pdf_bytes = f.read()
+            if pdf_bytes and len(pdf_bytes) > 100:
+                return StreamingResponse(
+                    io.BytesIO(pdf_bytes),
+                    media_type="application/pdf",
+                    headers={"Content-Disposition": f'inline; filename="{rep.report_number}.pdf"'}
+                )
+        except Exception:
+            pass
+
     # Generate QR verification URL
     verification_url = f"https://lims.metrology.gov.in/verify/{rep.id}"
     qr_b64 = CryptoAuditService.generate_qr_code_base64(verification_url)
