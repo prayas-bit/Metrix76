@@ -110,12 +110,18 @@ def generate_pdf_for_report(report_id: str):
         except Exception as e:
             print(f"Chart render warning: {e}")
 
-    pdf_gen = OIMLPDFGenerator()
-    pdf_bytes = pdf_gen.render_pdf(
-        report_context=report_dict,
-        chart_png_bytes=chart_png,
-        qr_png_base64=qr_b64
-    )
+    try:
+        pdf_gen = OIMLPDFGenerator()
+        pdf_bytes = pdf_gen.render_pdf(
+            report_context=report_dict,
+            chart_png_bytes=chart_png,
+            qr_png_base64=qr_b64
+        )
+    except RuntimeError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=str(exc)
+        )
 
     return StreamingResponse(
         io.BytesIO(pdf_bytes),

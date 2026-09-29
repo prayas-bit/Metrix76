@@ -153,6 +153,10 @@ def sample_report_context():
     }
 
 def test_weasyprint_pdf_generation(sample_report_context):
+    from app.services.reporting.pdf_generator import HTML
+    if HTML is None:
+        pytest.skip("WeasyPrint GTK/Pango libraries are not installed on this host environment.")
+
     spec = InstrumentMeta(
         accuracy_class=AccuracyClass.CLASS_III,
         max_capacity=15.0,
@@ -176,6 +180,7 @@ def test_weasyprint_pdf_generation(sample_report_context):
     assert isinstance(pdf_bytes, bytes)
     assert len(pdf_bytes) > 10000  # Substantial PDF document
     assert pdf_bytes.startswith(b"%PDF-")
+
 
 def test_docx_report_generation(sample_report_context):
     spec = InstrumentMeta(

@@ -8,6 +8,7 @@ import { Instrument, InstrumentMeta, SanityCheckResult, AccuracyClass } from '@/
 export default function InstrumentsPage() {
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Form state for new instrument passport
   const [newSpec, setNewSpec] = useState<InstrumentMeta>({
@@ -22,13 +23,21 @@ export default function InstrumentsPage() {
   const [sanityResult, setSanityResult] = useState<SanityCheckResult | null>(null);
 
   useEffect(() => {
-    listInstruments().then(setInstruments).catch(console.error);
+    listInstruments()
+      .then(setInstruments)
+      .catch((err) => {
+        console.error(err);
+        setError('Unable to load instrument list. Confirm the FastAPI backend is running on http://localhost:8000.');
+      });
   }, []);
 
   useEffect(() => {
     validateInstrumentSanity(newSpec)
       .then(setSanityResult)
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        setSanityResult(null);
+      });
   }, [newSpec]);
 
   return (
@@ -51,6 +60,12 @@ export default function InstrumentsPage() {
           <span>New Instrument Passport</span>
         </button>
       </div>
+
+      {error && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <strong>Instrument data unavailable:</strong> {error}
+        </div>
+      )}
 
       {/* Sanity Engine Live Checker Sandbox */}
       <div className="bg-slate-900 text-white rounded-xl p-6 shadow-md space-y-4">

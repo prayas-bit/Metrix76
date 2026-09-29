@@ -3,8 +3,15 @@ import os
 import base64
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader
-from weasyprint import HTML, CSS
+
+try:
+    from weasyprint import HTML, CSS
+except (ImportError, OSError):  # pragma: no cover - optional on systems lacking GTK/Pango libraries
+    HTML = None
+    CSS = None
+
 from app.services.reporting.chart_engine import OIMLErrorChartEngine
+
 
 class OIMLPDFGenerator:
     """
@@ -58,6 +65,12 @@ class OIMLPDFGenerator:
         html_content = template.render(**context)
 
         # 4. Compile with WeasyPrint & report_styles.css
+        if HTML is None:
+            raise RuntimeError(
+                "WeasyPrint is not available on this system because GTK/Pango C libraries are not installed. "
+                "PDF generation requires GTK/Pango or running inside the Linux Docker container."
+            )
+
         css_path = os.path.join(self.template_dir, "report_styles.css")
         stylesheets = [CSS(filename=css_path)] if os.path.exists(css_path) else []
 
@@ -68,3 +81,4 @@ class OIMLPDFGenerator:
         )
         pdf_buffer.seek(0)
         return pdf_buffer.getvalue()
+

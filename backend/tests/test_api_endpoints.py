@@ -128,7 +128,22 @@ def test_api_render_chart_svg(sample_weighing_payload):
     assert "<svg" in res.text
 
 
+def test_api_generate_pdf_for_report():
+    from app.services.reporting.pdf_generator import HTML
+    if HTML is None:
+        pytest.skip("WeasyPrint GTK/Pango libraries are not installed on this host environment.")
+
+    res = client.post("/api/v1/documents/reports/rep-100/generate-pdf")
+    assert res.status_code == 200
+    assert res.headers["content-type"] == "application/pdf"
+    assert res.content.startswith(b"%PDF-")
+
+
 def test_api_generate_pdf_direct():
+    from app.services.reporting.pdf_generator import HTML
+    if HTML is None:
+        pytest.skip("WeasyPrint GTK/Pango libraries are not installed on this host environment.")
+
     payload = {
         "report_context": {
             "report_number": "OIML-TEST-001",
@@ -174,6 +189,13 @@ def test_api_generate_pdf_direct():
     assert res.status_code == 200
     assert res.headers["content-type"] == "application/pdf"
     assert res.content.startswith(b"%PDF-")
+
+
+def test_api_generate_docx_for_report():
+    res = client.post("/api/v1/documents/reports/rep-100/generate-docx")
+    assert res.status_code == 200
+    assert "application/vnd.openxmlformats-officedocument.wordprocessingml.document" in res.headers["content-type"]
+    assert res.content.startswith(b"PK\x03\x04")
 
 
 def test_api_generate_docx_direct():
