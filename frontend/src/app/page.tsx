@@ -20,16 +20,30 @@ import { formatDate } from '@/lib/utils';
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getDashboardData()
       .then(setData)
-      .catch((err) => console.error('Dashboard load error:', err))
+      .catch((err) => {
+        console.error('Dashboard load error:', err);
+        setError('Unable to load dashboard data. Confirm the FastAPI backend is running on http://localhost:8000.');
+      })
       .finally(() => setLoading(false));
   }, []);
 
+  if (loading) {
+    return <div className="text-sm text-slate-500">Loading dashboard…</div>;
+  }
+
   return (
     <div className="space-y-8">
+      {error && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <strong>Dashboard unavailable:</strong> {error}
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

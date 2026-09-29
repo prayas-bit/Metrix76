@@ -9,13 +9,21 @@ import { formatDate } from '@/lib/utils';
 export default function ReferenceStandardsPage() {
   const [standards, setStandards] = useState<ReferenceStandard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     listReferenceStandards()
       .then(setStandards)
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error(err);
+        setError('Unable to load reference standards. Confirm the FastAPI backend is running on http://localhost:8000.');
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return <div className="text-sm text-slate-500">Loading standards…</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -35,8 +43,15 @@ export default function ReferenceStandardsPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
-        <table className="w-full text-left text-xs border-collapse">
+      {error && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <strong>Standards registry unavailable:</strong> {error}
+        </div>
+      )}
+
+      {!error && (
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <table className="w-full text-left text-xs border-collapse">
           <thead className="bg-slate-100 border-b border-slate-200 text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
             <tr>
               <th className="p-3.5">Set Identifier</th>
@@ -89,8 +104,9 @@ export default function ReferenceStandardsPage() {
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
