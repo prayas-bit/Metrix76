@@ -191,36 +191,36 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
   }, [results, e, accuracyClass]);
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+    <div className="bg-white p-6 border border-editorial-border shadow-editorial space-y-4">
       {/* Header & Status Badges */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-editorial-border pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-black text-slate-900 tracking-tight">
-              Metrological Error Corridor & Statutory ±mpe Tolerance Envelopes
+            <h3 className="font-display font-black text-xs uppercase tracking-wider text-ink-950">
+              METROLOGICAL ERROR CORRIDOR & STATUTORY ±mpe ENVELOPES
             </h3>
-            <span className="px-2 py-0.5 bg-blue-50 text-blue-800 border border-blue-200 text-[10px] font-bold rounded-full">
+            <span className="px-2 py-0.5 bg-ink-950 text-white font-mono text-[10px] font-bold uppercase tracking-wider">
               OIML R 76-1 ({accuracyClass.replace('_', ' ')})
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Dynamic step-line envelopes plotting ±0.5e, ±1.0e, and ±1.5e with real-time scatter point compliance signaling.
+          <p className="text-[11px] font-mono text-ink-500 uppercase mt-0.5">
+            DYNAMIC STEP-LINE ENVELOPES PLOTTING ±0.5e, ±1.0e, AND ±1.5e WITH REAL-TIME COMPLIANCE SIGNALING
           </p>
         </div>
 
         {/* Legend Pills */}
-        <div className="flex items-center gap-3 text-xs font-semibold">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-xs"></span>
-            Safe (≤90%): {summary.safeCount}
+        <div className="flex items-center gap-3 text-[10px] font-mono uppercase font-bold tracking-wider">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-editorial-border text-ink-900">
+            <span className="w-2 h-2 bg-emerald-600 inline-block"></span>
+            SAFE (≤90%): {summary.safeCount}
           </span>
-          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block shadow-xs"></span>
-            Warning (90-100%): {summary.warnCount}
+          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-editorial-border text-ink-900">
+            <span className="w-2 h-2 bg-amber-500 inline-block"></span>
+            WARNING (90-100%): {summary.warnCount}
           </span>
-          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block shadow-xs animate-pulse"></span>
-            Breach (&gt;100%): {summary.breachCount}
+          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-editorial-border text-ink-900">
+            <span className="w-2 h-2 bg-rose-600 inline-block animate-pulse"></span>
+            BREACH (&gt;100%): {summary.breachCount}
           </span>
         </div>
       </div>
@@ -229,7 +229,7 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
       <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 15, bottom: 25 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <CartesianGrid strokeDasharray="2 2" stroke="#E2E2DE" vertical={false} />
             <XAxis
               dataKey="load"
               unit={` ${unit}`}
@@ -271,42 +271,42 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
                 const ec = obs ? obs.corrected_error_ec : pointData?.correctedErrorEc;
 
                 return (
-                  <div className="bg-slate-900 text-white p-3.5 rounded-xl shadow-xl border border-slate-700 text-xs space-y-2 min-w-[220px]">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 font-bold">
-                      <span>Applied Load (L):</span>
-                      <span className="font-mono text-emerald-400">
+                  <div className="bg-ink-950 text-white p-4 border border-neutral-800 text-xs space-y-2.5 min-w-[240px] font-mono shadow-editorial">
+                    <div className="flex items-center justify-between border-b border-neutral-800 pb-1.5 font-bold">
+                      <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Applied Load (L):</span>
+                      <span className="font-bold text-white">
                         {label} {unit}
                       </span>
                     </div>
 
-                    <div className="space-y-1 text-[11px] text-slate-300">
+                    <div className="space-y-1.5 text-[11px] text-neutral-300">
                       {obs && (
                         <>
                           <div className="flex justify-between">
-                            <span className="text-slate-400">Observed Indication (I):</span>
-                            <span className="font-mono text-white">{obs.indication_observed} {unit}</span>
+                            <span className="text-neutral-400">Observed Indication (I):</span>
+                            <span className="text-white font-bold">{obs.indication_observed} {unit}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-400">Turning Point (P):</span>
-                            <span className="font-mono text-white">{obs.calculated_p?.toFixed(4)} {unit}</span>
+                            <span className="text-neutral-400">Turning Point (P):</span>
+                            <span className="text-white font-bold">{obs.calculated_p?.toFixed(4)} {unit}</span>
                           </div>
                         </>
                       )}
                       <div className="flex justify-between">
-                        <span className="text-slate-400">Corrected Error (Ec):</span>
-                        <span className="font-mono font-bold text-cyan-300">
+                        <span className="text-neutral-400">Corrected Error (Ec):</span>
+                        <span className="font-bold text-white">
                           {ec !== null && ec !== undefined ? `${ec > 0 ? '+' : ''}${ec.toFixed(4)} ${unit}` : 'N/A'}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">Statutory Margin (±mpe):</span>
-                        <span className="font-mono text-rose-300">±{upperMpe?.toFixed(4)} {unit}</span>
+                        <span className="text-neutral-400">Statutory Margin (±mpe):</span>
+                        <span className="font-bold text-neutral-200">±{upperMpe?.toFixed(4)} {unit}</span>
                       </div>
                     </div>
 
                     {ec !== null && ec !== undefined && upperMpe && (
-                      <div className="pt-1.5 border-t border-slate-800 flex items-center justify-between font-bold text-[11px]">
-                        <span>Tolerance Margin Ratio:</span>
+                      <div className="pt-2 border-t border-neutral-800 flex items-center justify-between font-bold text-[10px] uppercase tracking-wider">
+                        <span className="text-neutral-400">Tolerance Ratio:</span>
                         <span
                           className={
                             Math.abs(ec) > upperMpe
@@ -329,8 +329,8 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
             <Line
               type="stepAfter"
               dataKey="upperMpe"
-              stroke="#ef4444"
-              strokeDasharray="5 5"
+              stroke="#DC2626"
+              strokeDasharray="4 4"
               strokeWidth={1.5}
               dot={false}
               name="Upper statutory +mpe"
@@ -339,8 +339,8 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
             <Line
               type="stepAfter"
               dataKey="lowerMpe"
-              stroke="#ef4444"
-              strokeDasharray="5 5"
+              stroke="#DC2626"
+              strokeDasharray="4 4"
               strokeWidth={1.5}
               dot={false}
               name="Lower statutory -mpe"
@@ -351,10 +351,10 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
             <Line
               type="monotone"
               dataKey="increasingEc"
-              stroke="#2563eb"
+              stroke="#0A0A0A"
               strokeWidth={2}
               dot={<CustomToleranceDot />}
-              activeDot={{ r: 7, stroke: '#1d4ed8', strokeWidth: 2 }}
+              activeDot={{ r: 6, stroke: '#0A0A0A', strokeWidth: 2 }}
               name="Increasing Run (▲)"
               connectNulls
             />
@@ -363,11 +363,11 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
             <Line
               type="monotone"
               dataKey="decreasingEc"
-              stroke="#7c3aed"
-              strokeWidth={2}
+              stroke="#525252"
+              strokeWidth={1.5}
               strokeDasharray="3 3"
               dot={<CustomToleranceDot />}
-              activeDot={{ r: 7, stroke: '#6d28d9', strokeWidth: 2 }}
+              activeDot={{ r: 6, stroke: '#525252', strokeWidth: 2 }}
               name="Decreasing Run (▼)"
               connectNulls
             />
@@ -375,7 +375,7 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
             <Legend
               verticalAlign="top"
               height={36}
-              wrapperStyle={{ fontSize: '11px', fontWeight: 600, paddingBottom: '10px' }}
+              wrapperStyle={{ fontSize: '10px', fontFamily: 'monospace', textTransform: 'uppercase', paddingBottom: '12px' }}
             />
           </ComposedChart>
         </ResponsiveContainer>
@@ -383,26 +383,26 @@ export default function ToleranceCorridor({ instrument, results }: ToleranceCorr
 
       {/* Compliance Health Banner */}
       <div
-        className={`p-3 rounded-xl border flex items-center justify-between text-xs font-semibold ${
+        className={`p-4 border flex items-center justify-between text-xs font-mono uppercase tracking-wide ${
           summary.isCompliant
-            ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900'
-            : 'bg-rose-50/80 border-rose-200 text-rose-900'
+            ? 'bg-white border-emerald-300 text-emerald-900 shadow-editorial'
+            : 'bg-neutral-900 border-neutral-900 text-white shadow-editorial'
         }`}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {summary.isCompliant ? (
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           ) : (
-            <AlertOctagon className="w-4 h-4 text-rose-600" />
+            <AlertOctagon className="w-4 h-4 text-rose-500 flex-shrink-0" />
           )}
           <span>
             {summary.isCompliant
-              ? 'All observed weighing points reside strictly within statutory OIML R 76 error envelopes.'
-              : `Tolerance breach detected: ${summary.breachCount} test point(s) exceed maximum statutory permissible error limits.`}
+              ? 'ALL OBSERVED WEIGHING POINTS RESIDE STRICTLY WITHIN STATUTORY OIML R 76 ERROR ENVELOPES.'
+              : `TOLERANCE BREACH: ${summary.breachCount} TEST POINT(S) EXCEED MAXIMUM STATUTORY PERMISSIBLE ERROR LIMITS.`}
           </span>
         </div>
-        <div className="font-mono text-[11px] font-bold">
-          Peak Margin: {summary.maxRatioPct}%
+        <div className="font-mono text-xs font-bold pl-4">
+          PEAK MARGIN: {summary.maxRatioPct}%
         </div>
       </div>
     </div>

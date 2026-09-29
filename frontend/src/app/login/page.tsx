@@ -13,9 +13,7 @@ import {
   User, 
   CheckCircle2, 
   AlertCircle,
-  Building2,
-  ArrowRight,
-  Shield
+  ArrowRight
 } from 'lucide-react';
 import { useAuth, UserRole } from '@/lib/authContext';
 
@@ -99,36 +97,36 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-10 px-4">
+    <div className="max-w-lg mx-auto py-12 sm:py-20 px-4">
       {/* Brand Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center p-3 bg-blue-900 text-white rounded-2xl shadow-lg mb-3">
-          <Scale className="w-8 h-8" />
+      <div className="text-center mb-8 space-y-2">
+        <div className="w-12 h-12 bg-ink-950 text-white flex items-center justify-center font-display font-black text-sm tracking-wider mx-auto mb-4 shadow-editorial">
+          M76
         </div>
-        <h1 className="text-2xl font-black tracking-tight text-slate-900">
-          Legal Metrology Portal
+        <h1 className="font-display font-extrabold text-3xl tracking-tight text-ink-950 uppercase">
+          METRIX WORKSPACE
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
-          OIML R 76 Type Approval & LIMS Platform
+        <p className="text-xs font-mono text-ink-500 uppercase tracking-widest">
+          STATUTORY OIML R 76 VERIFICATION PORTAL
         </p>
       </div>
 
       {/* Mode Switcher Tabs */}
-      <div className="flex bg-slate-200/80 p-1 rounded-xl mb-6">
+      <div className="flex border border-editorial-border bg-alabaster-200 p-1 mb-6">
         <button
           type="button"
           onClick={() => {
             setMode('signin');
             setMessage(null);
           }}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2 text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
             mode === 'signin'
-              ? 'bg-white text-blue-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-ink-950 text-white shadow-editorial'
+              : 'text-ink-600 hover:text-ink-950'
           }`}
         >
           <LogIn className="w-3.5 h-3.5" />
-          <span>Sign In</span>
+          <span>SIGN IN</span>
         </button>
         <button
           type="button"
@@ -136,24 +134,24 @@ export default function LoginPage() {
             setMode('signup');
             setMessage(null);
           }}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2 text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
             mode === 'signup'
-              ? 'bg-white text-blue-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-ink-950 text-white shadow-editorial'
+              : 'text-ink-600 hover:text-ink-950'
           }`}
         >
           <UserPlus className="w-3.5 h-3.5" />
-          <span>Register / Sign Up</span>
+          <span>REGISTER</span>
         </button>
       </div>
 
       {/* Status Message */}
       {message && (
         <div
-          className={`mb-5 p-3.5 rounded-xl text-xs font-medium flex items-center gap-2.5 ${
+          className={`mb-6 p-4 text-xs font-mono flex items-center gap-2.5 border ${
             message.type === 'success'
-              ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
-              : 'bg-rose-50 text-rose-900 border border-rose-200'
+              ? 'bg-white text-emerald-800 border-emerald-300'
+              : 'bg-white text-rose-800 border-rose-300'
           }`}
         >
           {message.type === 'success' ? (
@@ -166,70 +164,70 @@ export default function LoginPage() {
       )}
 
       {/* Auth Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="bg-white border border-editorial-border p-8 shadow-editorial">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {mode === 'signup' && (
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Full Name
+              <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                FULL NAME
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-ink-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Dr. Rajesh Sharma"
-                  className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-3 py-2.5 bg-alabaster-50 border border-editorial-border text-xs text-ink-950 outline-none focus:border-ink-950 transition-colors"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Email Address
+            <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+              OFFICIAL EMAIL ADDRESS
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-ink-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="officer@metrology.gov.in"
-                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-10 pr-3 py-2.5 bg-alabaster-50 border border-editorial-border text-xs text-ink-950 outline-none focus:border-ink-950 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Password
+            <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+              PASSWORD
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Lock className="w-4 h-4 text-ink-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-10 pr-3 py-2.5 bg-alabaster-50 border border-editorial-border text-xs text-ink-950 outline-none focus:border-ink-950 transition-colors"
               />
             </div>
           </div>
 
           {mode === 'signup' && (
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Designated Metrology Role
+              <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                DESIGNATED METROLOGY ROLE
               </label>
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2.5 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               >
                 <option value="TECHNICIAN">Testing Metrologist (TECHNICIAN - Data Entry & Tests)</option>
                 <option value="APPROVER">Legal Metrology Officer (APPROVER - Review & PIN Sign-off)</option>
@@ -241,52 +239,52 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-2.5 px-4 rounded-lg text-xs shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
+            className="w-full bg-ink-950 hover:bg-neutral-800 text-white font-mono font-bold text-xs uppercase tracking-widest py-3 px-4 shadow-editorial transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-4"
           >
-            <span>{loading ? 'Processing...' : mode === 'signin' ? 'Sign In to Workspace' : 'Create Metrology Account'}</span>
+            <span>{loading ? 'PROCESSING...' : mode === 'signin' ? 'ENTER WORKSPACE' : 'REGISTER ACCOUNT'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
 
         {/* Quick fill buttons for pre-registered test accounts */}
-        <div className="mt-6 pt-5 border-t border-slate-100">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-            Quick Fill Registered Accounts:
+        <div className="mt-8 pt-6 border-t border-editorial-border">
+          <span className="text-[10px] font-mono font-bold text-ink-400 uppercase tracking-widest block mb-2.5">
+            QUICK ACCESS TEST METROLOGISTS:
           </span>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => fillCredentials('technician@metrology.gov.in')}
-              className="px-2 py-1.5 rounded-lg border border-slate-200 hover:border-emerald-400 bg-slate-50 hover:bg-emerald-50 text-[10px] font-semibold text-slate-700 text-center transition-colors cursor-pointer"
+              className="px-2 py-2 border border-editorial-border hover:border-ink-950 bg-alabaster-50 hover:bg-white text-[10px] font-mono font-semibold text-ink-900 text-center transition-colors cursor-pointer"
             >
-              👷 Tester
+              TESTER
             </button>
             <button
               type="button"
               onClick={() => fillCredentials('approver@metrology.gov.in')}
-              className="px-2 py-1.5 rounded-lg border border-slate-200 hover:border-purple-400 bg-slate-50 hover:bg-purple-50 text-[10px] font-semibold text-slate-700 text-center transition-colors cursor-pointer"
+              className="px-2 py-2 border border-editorial-border hover:border-ink-950 bg-alabaster-50 hover:bg-white text-[10px] font-mono font-semibold text-ink-900 text-center transition-colors cursor-pointer"
             >
-              ⚖️ Approver
+              APPROVER
             </button>
             <button
               type="button"
               onClick={() => fillCredentials('admin@metrology.gov.in')}
-              className="px-2 py-1.5 rounded-lg border border-slate-200 hover:border-blue-400 bg-slate-50 hover:bg-blue-50 text-[10px] font-semibold text-slate-700 text-center transition-colors cursor-pointer"
+              className="px-2 py-2 border border-editorial-border hover:border-ink-950 bg-alabaster-50 hover:bg-white text-[10px] font-mono font-semibold text-ink-900 text-center transition-colors cursor-pointer"
             >
-              👑 Director
+              DIRECTOR
             </button>
           </div>
         </div>
       </div>
 
-      {/* Compliance Footer */}
-      <div className="mt-8 text-center text-xs text-slate-400 flex items-center justify-center gap-3">
-        <span className="flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-          ISO/IEC 17025 Compliant
+      {/* Compliance Notice */}
+      <div className="mt-8 text-center text-[10px] font-mono text-ink-400 flex items-center justify-center gap-3 uppercase tracking-wider">
+        <span className="flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-ink-900" />
+          ISO/IEC 17025 ACCREDITED
         </span>
         <span>•</span>
-        <span>Statutory Metrology Portal</span>
+        <span>TWO-MAN RULE ENFORCED</span>
       </div>
     </div>
   );
