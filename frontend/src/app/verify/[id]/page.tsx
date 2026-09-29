@@ -14,7 +14,7 @@ import {
   Layers,
   Scale
 } from 'lucide-react';
-import { verifyPublicReport } from '@/lib/api';
+import { verifyPublicReport, getReportPdfUrl } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 
 export default function PublicVerifyPage({ params }: { params: Promise<{ id: string }> }) {
@@ -148,7 +148,7 @@ export default function PublicVerifyPage({ params }: { params: Promise<{ id: str
           {/* Actions */}
           <div className="pt-2">
             <a
-              href={`/api/v1/documents/reports/${reportId}/generate-pdf`}
+              href={getReportPdfUrl(reportId)}
               target="_blank"
               rel="noreferrer"
               className="w-full py-3 bg-ink-950 text-white text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition-all text-center flex items-center justify-center gap-2 shadow-editorial"

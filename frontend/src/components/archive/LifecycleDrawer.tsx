@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { TestReportSummary } from '@/types/metrology';
 import { formatDate } from '@/lib/utils';
+import { getReportPdfUrl } from '@/lib/api';
 
 interface LifecycleAttempt {
   attemptNumber: number;
@@ -240,7 +241,7 @@ export default function LifecycleDrawer({
                       {isPass && (
                         <div className="flex items-center gap-2 pt-1 font-mono text-xs">
                           <a
-                            href={`/api/v1/documents/reports/${att.reportId}/generate-pdf`}
+                            href={getReportPdfUrl(att.reportId)}
                             target="_blank"
                             rel="noreferrer"
                             className="px-3 py-1.5 bg-ink-950 text-white text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-800 flex items-center gap-1.5"

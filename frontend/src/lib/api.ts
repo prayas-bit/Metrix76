@@ -207,3 +207,13 @@ export async function uploadAttachment(formData: FormData) {
   }
   return res.json();
 }
+
+// Document URLs
+export { API_BASE };
+export function getReportPdfUrl(reportId: string): string {
+  return `${API_BASE}/api/v1/documents/reports/${reportId}/generate-pdf`;
+}
+
+export function getReportDocxUrl(reportId: string): string {
+  return `${API_BASE}/api/v1/documents/reports/${reportId}/generate-docx`;
+}

@@ -17,7 +17,7 @@ import {
   Eye,
   FileText
 } from 'lucide-react';
-import { submitVerificationAction, searchArchive, getReportDetail } from '@/lib/api';
+import { submitVerificationAction, searchArchive, getReportDetail, getReportPdfUrl } from '@/lib/api';
 import { TestReportSummary, TestReportDetail } from '@/types/metrology';
 import { formatDate } from '@/lib/utils';
 
@@ -338,7 +338,7 @@ export default function VerificationConsolePage() {
                   )}
                   <div className="pt-2 flex items-center gap-3">
                     <a
-                      href={`http://localhost:8000/api/v1/documents/${reportDetail.id}/pdf`}
+                      href={getReportPdfUrl(reportDetail.id)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-ink-950 hover:bg-neutral-800 text-white px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-editorial"
