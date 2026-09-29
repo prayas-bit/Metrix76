@@ -27,6 +27,45 @@ def sample_weighing_payload():
     }
 
 
+@pytest.fixture(autouse=True)
+def seed_test_report():
+    from datetime import datetime, timezone
+    from app.api.v1.endpoints.reports import _LOCAL_REPORTS, _SAMPLE_INST, _SAMPLE_STD
+    from app.schemas.report import ReportStatus, TechnicalChecklist, EnvironmentalConditions, TestReportDetail
+
+    test_rep = TestReportDetail(
+        id="rep-100",
+        report_number="OIML-2026-TR-0100",
+        attempt_number=1,
+        status=ReportStatus.APPROVED,
+        standard_version="OIML R 76-1:2006",
+        instrument=_SAMPLE_INST,
+        reference_standard=_SAMPLE_STD,
+        environment=EnvironmentalConditions(
+            ambient_temperature_celsius=22.5,
+            relative_humidity_pct=55.0,
+            atmospheric_pressure_hpa=1013.25
+        ),
+        technical_checklist=TechnicalChecklist(),
+        overall_verdict=True,
+        rejection_reason=None,
+        sha256_hash="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        pdf_storage_path="generated-reports/rep-100.pdf",
+        docx_storage_path="generated-reports/rep-100.docx",
+        weighing_observations=[],
+        repeatability_results=[],
+        eccentricity_results=[],
+        conducted_by="A. Verma (Testing Metrologist)",
+        approved_by="Dr. R. K. Mukherjee (Director of Metrology)",
+        approved_at=datetime.now(timezone.utc),
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc)
+    )
+    _LOCAL_REPORTS.append(test_rep)
+    yield
+    _LOCAL_REPORTS.clear()
+
+
 def test_api_health():
     res = client.get("/health")
     assert res.status_code == 200
@@ -269,3 +308,9 @@ def test_api_upload_attachment():
     assert resp_data["attachment_type"] == "NAMEPLATE"
     assert "instrument-attachments/inst-test-01/nameplate_" in resp_data["storage_path"]
     assert resp_data["file_size_bytes"] > 0
+
+
+def test_api_assign_role_invalid_role():
+    res = client.post("/api/v1/auth/assign-role", json={"user_id": "usr-123", "role": "SUPERUSER"})
+    assert res.status_code == 422
+

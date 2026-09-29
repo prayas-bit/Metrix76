@@ -59,36 +59,7 @@ _SAMPLE_STD = ReferenceStandardOut(
 )
 
 # In-memory fallback
-_LOCAL_REPORTS: List[TestReportDetail] = [
-    TestReportDetail(
-        id="rep-100",
-        report_number="OIML-2026-TR-0100",
-        attempt_number=1,
-        status=ReportStatus.APPROVED,
-        standard_version="OIML R 76-1:2006",
-        instrument=_SAMPLE_INST,
-        reference_standard=_SAMPLE_STD,
-        environment=EnvironmentalConditions(
-            ambient_temperature_celsius=22.5,
-            relative_humidity_pct=55.0,
-            atmospheric_pressure_hpa=1013.25
-        ),
-        technical_checklist=TechnicalChecklist(),
-        overall_verdict=True,
-        rejection_reason=None,
-        sha256_hash="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        pdf_storage_path="generated-reports/rep-100.pdf",
-        docx_storage_path="generated-reports/rep-100.docx",
-        weighing_observations=[],
-        repeatability_results=[],
-        eccentricity_results=[],
-        conducted_by="A. Verma (Testing Metrologist)",
-        approved_by="Dr. R. K. Mukherjee (Director of Metrology)",
-        approved_at=datetime.now(timezone.utc),
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc)
-    )
-]
+_LOCAL_REPORTS: List[TestReportDetail] = []
 _LOCAL_OBSERVATIONS: Dict[str, List[TestObservationRowPayload]] = {}
 
 
@@ -272,9 +243,16 @@ def create_report_draft(payload: TestReportCreate):
         raise HTTPException(status_code=422, detail="Selected reference standard is expired or inactive")
 
     now = datetime.now(timezone.utc)
-    report_num = f"OIML-{now.year}-TR-{len(_LOCAL_REPORTS) + 1:04d}"
-
     supabase = get_supabase_client()
+    seq_num = len(_LOCAL_REPORTS) + 1
+    if supabase:
+        try:
+            count_res = supabase.table("test_reports").select("id", count="exact").execute()
+            if count_res.count is not None:
+                seq_num = count_res.count + 1
+        except Exception:
+            pass
+    report_num = f"OIML-{now.year}-TR-{seq_num:04d}"
     if supabase:
         try:
             # Resolve active user ID for foreign key constraint
@@ -576,7 +554,7 @@ def search_archive(
                 db_query = db_query.eq("conducted_by", user_id)
 
             res = db_query.order("created_at", desc=True).execute()
-            if res.data:
+            if res.data is not None:
                 filtered = []
                 for r in res.data:
                     inst = r.get("instruments") or {}
@@ -600,6 +578,8 @@ def search_archive(
     # In-memory fallback
     results = []
     for r in _LOCAL_REPORTS:
+        if role == "TECHNICIAN" and user_id and r.conducted_by != user_id:
+            continue
         if query:
             q = query.lower()
             matches = (

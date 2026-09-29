@@ -217,3 +217,16 @@ export function getReportPdfUrl(reportId: string): string {
 export function getReportDocxUrl(reportId: string): string {
   return `${API_BASE}/api/v1/documents/reports/${reportId}/generate-docx`;
 }
+
+export async function assignUserRole(userId: string, role: string) {
+  const res = await fetch(`${API_BASE}/api/v1/auth/assign-role`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, role }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || 'Failed to assign role');
+  }
+  return res.json();
+}

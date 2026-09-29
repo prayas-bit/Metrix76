@@ -7,7 +7,8 @@ from app.api.v1.endpoints import (
     documents,
     verification,
     reports,
-    attachments
+    attachments,
+    auth
 )
 
 api_router = APIRouter()
@@ -20,3 +21,4 @@ api_router.include_router(documents.router, prefix="/documents", tags=["Document
 api_router.include_router(verification.router, prefix="/verification", tags=["Two-Man Verification (Module 5)"])
 api_router.include_router(reports.router, prefix="/reports", tags=["Searchable Archive & Verification (Module 6)"])
 api_router.include_router(attachments.router, prefix="/attachments", tags=["Evidence & Photographic Vault"])
+api_router.include_router(auth.router, prefix="/auth", tags=["Role & Access Management"])

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { 
   FileCheck2, 
@@ -34,7 +34,7 @@ export default function VerificationConsolePage() {
   const [submittingAction, setSubmittingAction] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string; hash?: string } | null>(null);
 
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     setLoadingList(true);
     try {
       const data = await searchArchive(undefined);
@@ -47,9 +47,12 @@ export default function VerificationConsolePage() {
         : data;
 
       if (filtered.length > 0) {
-        if (!selectedReportId || !filtered.some(r => r.id === selectedReportId)) {
-          setSelectedReportId(filtered[0].id);
-        }
+        setSelectedReportId(prev => {
+          if (!prev || !filtered.some(r => r.id === prev)) {
+            return filtered[0].id;
+          }
+          return prev;
+        });
       } else {
         setSelectedReportId(null);
         setReportDetail(null);
@@ -59,11 +62,11 @@ export default function VerificationConsolePage() {
     } finally {
       setLoadingList(false);
     }
-  };
+  }, [activeFilter]);
 
   useEffect(() => {
     fetchReports();
-  }, [activeFilter]);
+  }, [fetchReports]);
 
   useEffect(() => {
     if (!selectedReportId) {
