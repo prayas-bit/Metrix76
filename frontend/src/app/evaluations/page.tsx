@@ -30,6 +30,7 @@ import {
 } from '@/lib/api';
 import { getMPE, evaluateWeighingClient } from '@/lib/metrology/r76';
 import ToleranceChart from '@/components/worksheets/ToleranceChart';
+import { useAuth } from '@/lib/authContext';
 
 const STORAGE_KEY = 'draft_evaluation_default';
 
@@ -144,6 +145,7 @@ const evaluateRepeatabilitySeries = (series: RepeatabilitySeriesState, instrumen
 };
 
 export default function EvaluationsPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<WorksheetTab>('A_WEIGHING');
   const inputRefs = useRef<Record<string, HTMLInputElement | HTMLSelectElement | null>>({});
 
@@ -544,6 +546,7 @@ export default function EvaluationsPage() {
               audit_counter_value: 'AC-0001',
               notes: 'Created from technician evaluation workflow',
             },
+            conducted_by: user?.id,
           });
 
       const activeReportId = draftReport.id;
