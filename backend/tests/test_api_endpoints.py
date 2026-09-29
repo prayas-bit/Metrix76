@@ -139,9 +139,101 @@ def test_api_generate_pdf_for_report():
     assert res.content.startswith(b"%PDF-")
 
 
+def test_api_generate_pdf_direct():
+    from app.services.reporting.pdf_generator import HTML
+    if HTML is None:
+        pytest.skip("WeasyPrint GTK/Pango libraries are not installed on this host environment.")
+
+    payload = {
+        "report_context": {
+            "report_number": "OIML-TEST-001",
+            "created_date": "2026-09-29",
+            "approved_date": "2026-09-29",
+            "overall_verdict": True,
+            "zero_error_e0": 0.0,
+            "instrument": {
+                "serial_number": "SN-TEST",
+                "model_name": "TestScale",
+                "manufacturer_name": "TestLab",
+                "accuracy_class": "CLASS_III",
+                "max_capacity": 15.0,
+                "min_capacity": 0.1,
+                "scale_interval_d": 0.002,
+                "verification_interval_e": 0.002,
+                "unit": "kg",
+                "is_multi_interval": False,
+                "calculated_n": 7500,
+                "created_at": "2026-09-29T10:00:00Z"
+            },
+            "reference_standard": {
+                "set_identifier": "STD-01",
+                "accuracy_class": "E2",
+                "certificate_number": "CERT-01",
+                "calibrated_by": "NPL",
+                "calibration_date": "2026-01-01",
+                "expiry_date": "2027-01-01",
+                "is_active": True,
+                "is_expired": False,
+                "days_to_expiry": 100,
+                "created_at": "2026-09-29T10:00:00Z"
+            },
+            "environment": {
+                "ambient_temperature_celsius": 22.0,
+                "relative_humidity_pct": 50.0
+            },
+            "weighing_observations": [],
+            "conducted_by": "Tester"
+        }
+    }
+    res = client.post("/api/v1/documents/generate-pdf", json=payload)
+    assert res.status_code == 200
+    assert res.headers["content-type"] == "application/pdf"
+    assert res.content.startswith(b"%PDF-")
+
 
 def test_api_generate_docx_for_report():
     res = client.post("/api/v1/documents/reports/rep-100/generate-docx")
+    assert res.status_code == 200
+    assert "application/vnd.openxmlformats-officedocument.wordprocessingml.document" in res.headers["content-type"]
+    assert res.content.startswith(b"PK\x03\x04")
+
+
+def test_api_generate_docx_direct():
+    payload = {
+        "report_context": {
+            "report_number": "OIML-TEST-001",
+            "created_date": "2026-09-29",
+            "approved_date": "2026-09-29",
+            "overall_verdict": True,
+            "zero_error_e0": 0.0,
+            "instrument": {
+                "serial_number": "SN-TEST",
+                "model_name": "TestScale",
+                "manufacturer_name": "TestLab",
+                "accuracy_class": "CLASS_III",
+                "max_capacity": 15.0,
+                "min_capacity": 0.1,
+                "scale_interval_d": 0.002,
+                "verification_interval_e": 0.002,
+                "unit": "kg"
+            },
+            "reference_standard": {
+                "set_identifier": "STD-01",
+                "accuracy_class": "E2",
+                "certificate_number": "CERT-01",
+                "calibrated_by": "NPL",
+                "calibration_date": "2026-01-01",
+                "expiry_date": "2027-01-01"
+            },
+            "environment": {
+                "ambient_temperature_celsius": 22.0,
+                "relative_humidity_pct": 50.0
+            },
+            "weighing_observations": [],
+            "conducted_by": "Tester"
+        }
+    }
+    res = client.post("/api/v1/documents/generate-docx", json=payload)
     assert res.status_code == 200
     assert "application/vnd.openxmlformats-officedocument.wordprocessingml.document" in res.headers["content-type"]
     assert res.content.startswith(b"PK\x03\x04")

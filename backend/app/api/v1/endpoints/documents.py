@@ -1,16 +1,18 @@
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 import io
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from pydantic import BaseModel
 from app.services.reporting import OIMLPDFGenerator, OIMLDOCXGenerator, OIMLErrorChartEngine
 from app.services.document.crypto import CryptoAuditService
-from app.api.v1.endpoints.reports import REPORTS_DB, SAMPLE_INSTRUMENT, SAMPLE_STANDARD, SAMPLE_WEIGHING_OBSERVATIONS
+from app.api.v1.endpoints.reports import get_report_detail
 
 router = APIRouter()
 
+
 class DirectDocumentPayload(BaseModel):
     report_context: Dict[str, Any]
+
 
 @router.post("/generate-pdf")
 def generate_pdf_direct(payload: DirectDocumentPayload):
@@ -29,6 +31,7 @@ def generate_pdf_direct(payload: DirectDocumentPayload):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"PDF Generation Failed: {str(e)}")
+
 
 @router.post("/generate-docx")
 def generate_docx_direct(payload: DirectDocumentPayload):
@@ -60,18 +63,22 @@ def generate_docx_direct(payload: DirectDocumentPayload):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"DOCX Generation Failed: {str(e)}")
 
+
 @router.post("/reports/{report_id}/generate-pdf")
 def generate_pdf_for_report(report_id: str):
     """
-    Fetches test report observations and metadata, generates SHA-256 seal & dynamic QR badge,
+    Fetches test report observations and metadata from database, generates SHA-256 seal & dynamic QR badge,
     compiles via WeasyPrint, and streams back the official PDF certificate.
     """
-    rep = next((r for r in REPORTS_DB if r.id == report_id), None)
-    if not rep:
-        raise HTTPException(status_code=404, detail="Test report not found")
+    try:
+        rep = get_report_detail(report_id)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Report not found: {str(e)}")
 
     # Generate QR verification URL
-    verification_url = f"https://legalmetrology.gov.in/verify/{rep.id}"
+    verification_url = f"https://lims.metrology.gov.in/verify/{rep.id}"
     qr_b64 = CryptoAuditService.generate_qr_code_base64(verification_url)
 
     # Convert Pydantic model to dictionary context
@@ -92,11 +99,16 @@ def generate_pdf_for_report(report_id: str):
     }
 
     # Render error curve
-    chart_png = OIMLErrorChartEngine.generate_error_curve_image(
-        spec=rep.instrument,
-        results=rep.weighing_observations,
-        dpi=150
-    )
+    chart_png = None
+    if rep.weighing_observations:
+        try:
+            chart_png = OIMLErrorChartEngine.generate_error_curve_image(
+                spec=rep.instrument,
+                results=rep.weighing_observations,
+                dpi=150
+            )
+        except Exception as e:
+            print(f"Chart render warning: {e}")
 
     try:
         pdf_gen = OIMLPDFGenerator()
@@ -121,18 +133,26 @@ def generate_pdf_for_report(report_id: str):
 @router.post("/reports/{report_id}/generate-docx")
 def generate_docx_for_report(report_id: str):
     """
-    Fetches test report observations and metadata, compiles via python-docx,
+    Fetches test report observations and metadata from database, compiles via python-docx,
     and streams back the editable Word (.docx) report.
     """
-    rep = next((r for r in REPORTS_DB if r.id == report_id), None)
-    if not rep:
-        raise HTTPException(status_code=404, detail="Test report not found")
+    try:
+        rep = get_report_detail(report_id)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Report not found: {str(e)}")
 
-    chart_png = OIMLErrorChartEngine.generate_error_curve_image(
-        spec=rep.instrument,
-        results=rep.weighing_observations,
-        dpi=150
-    )
+    chart_png = None
+    if rep.weighing_observations:
+        try:
+            chart_png = OIMLErrorChartEngine.generate_error_curve_image(
+                spec=rep.instrument,
+                results=rep.weighing_observations,
+                dpi=150
+            )
+        except Exception:
+            chart_png = None
 
     report_dict = {
         "report_number": rep.report_number,

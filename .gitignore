@@ -21,3 +21,6 @@ Thumbs.db
 .vscode/
 .idea/
 backend/generated_reports/
+
+# Environment Variables
+.env
