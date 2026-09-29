@@ -1,5 +1,18 @@
-import EvaluationsPage from '../../page';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function EditEvaluationPage() {
-  return <EvaluationsPage />;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/evaluations');
+  }, [router]);
+
+  return (
+    <div className="p-8 text-center text-slate-500 text-sm">
+      Redirecting to Evaluation Editor...
+    </div>
+  );
 }
