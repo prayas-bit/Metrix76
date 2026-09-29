@@ -129,10 +129,15 @@ def test_api_render_chart_svg(sample_weighing_payload):
 
 
 def test_api_generate_pdf_for_report():
+    from app.services.reporting.pdf_generator import HTML
+    if HTML is None:
+        pytest.skip("WeasyPrint GTK/Pango libraries are not installed on this host environment.")
+
     res = client.post("/api/v1/documents/reports/rep-100/generate-pdf")
     assert res.status_code == 200
     assert res.headers["content-type"] == "application/pdf"
     assert res.content.startswith(b"%PDF-")
+
 
 
 def test_api_generate_docx_for_report():
