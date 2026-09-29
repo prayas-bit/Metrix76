@@ -82,11 +82,10 @@ export default function PublicVerifyPage({ params }: { params: Promise<{ id: str
               </span>
             </div>
             <div
-              className={`px-3 py-1.5 font-black text-xs rounded-full flex items-center gap-1.5 border ${
-                isHashMatched
+              className={`px-3 py-1.5 font-black text-xs rounded-full flex items-center gap-1.5 border ${isHashMatched
                   ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
                   : 'bg-rose-100 text-rose-800 border-rose-300'
-              }`}
+                }`}
             >
               {isHashMatched ? (
                 <>
