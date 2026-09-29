@@ -180,6 +180,7 @@ export interface CreateReportDraftPayload {
   relative_humidity_pct: number;
   atmospheric_pressure_hpa?: number;
   technical_checklist: TechnicalChecklist;
+  conducted_by?: string;
 }
 
 export interface ReportObservationInput {
@@ -196,6 +197,39 @@ export interface ReportObservationInput {
 export interface BatchObservationPayload {
   report_id: string;
   observations: ReportObservationInput[];
+}
+
+export interface EnvironmentalConditions {
+  ambient_temperature_celsius: number;
+  relative_humidity_pct: number;
+  atmospheric_pressure_hpa?: number;
+  temp_min_allowed?: number;
+  temp_max_allowed?: number;
+}
+
+export interface TestReportDetail {
+  id: string;
+  report_number: string;
+  attempt_number: number;
+  status: ReportStatus;
+  standard_version: string;
+  instrument: Instrument;
+  reference_standard: ReferenceStandard;
+  environment: EnvironmentalConditions;
+  technical_checklist: TechnicalChecklist;
+  overall_verdict: boolean | null;
+  rejection_reason?: string | null;
+  sha256_hash?: string | null;
+  pdf_storage_path?: string | null;
+  docx_storage_path?: string | null;
+  weighing_observations: WeighingEvaluationResult[];
+  repeatability_results: RepeatabilitySeriesResult[];
+  eccentricity_results: EccentricityEvaluationResult[];
+  conducted_by: string;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ReportSubmissionResult {

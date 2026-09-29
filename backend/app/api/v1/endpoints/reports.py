@@ -277,6 +277,18 @@ def create_report_draft(payload: TestReportCreate):
     supabase = get_supabase_client()
     if supabase:
         try:
+            # Resolve active user ID for foreign key constraint
+            conducted_by_id = "5ec3c7f8-9d47-4024-9898-a4bbb4db1701"
+            if payload.conducted_by:
+                conducted_by_id = payload.conducted_by
+            else:
+                try:
+                    users_res = supabase.auth.admin.list_users()
+                    if users_res and len(users_res) > 0:
+                        conducted_by_id = str(users_res[0].id)
+                except Exception:
+                    pass
+
             insert_data = {
                 "report_number": report_num,
                 "instrument_id": instrument.id,
@@ -288,7 +300,7 @@ def create_report_draft(payload: TestReportCreate):
                 "relative_humidity_pct": payload.relative_humidity_pct,
                 "atmospheric_pressure_hpa": payload.atmospheric_pressure_hpa,
                 "technical_checklist": payload.technical_checklist.model_dump() if payload.technical_checklist else {},
-                "conducted_by": "00000000-0000-0000-0000-000000000000",
+                "conducted_by": conducted_by_id,
             }
             res = supabase.table("test_reports").insert(insert_data).execute()
             if res.data and len(res.data) > 0:
@@ -545,10 +557,12 @@ def search_archive(
     query: Optional[str] = Query(None, description="Free text search: Serial, Model, Manufacturer, Report #"),
     accuracy_class: Optional[AccuracyClass] = None,
     status_filter: Optional[ReportStatus] = None,
-    verdict: Optional[bool] = None
+    verdict: Optional[bool] = None,
+    user_id: Optional[str] = Query(None, description="Scoped user ID for metrologist data isolation"),
+    role: Optional[str] = Query(None, description="Active user role")
 ):
     """
-    Module 6: Faceted search and filter engine for reports from Supabase.
+    Module 6: Faceted search and filter engine for reports with multi-tenant user scoping.
     """
     supabase = get_supabase_client()
     if supabase:
@@ -558,6 +572,8 @@ def search_archive(
                 db_query = db_query.eq("status", status_filter.value)
             if verdict is not None:
                 db_query = db_query.eq("overall_verdict", verdict)
+            if role == "TECHNICIAN" and user_id:
+                db_query = db_query.eq("conducted_by", user_id)
 
             res = db_query.order("created_at", desc=True).execute()
             if res.data:
