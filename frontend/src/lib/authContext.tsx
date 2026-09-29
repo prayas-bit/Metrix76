@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, getRolesFromClaims, normalizePrimaryRole } from './supabaseClient';
+import { assignUserRole } from './api';
 import type { User, Session } from '@supabase/supabase-js';
 
 export type UserRole = 'TECHNICIAN' | 'APPROVER' | 'ADMIN';
@@ -146,6 +147,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       },
     });
+
+    if (error) {
+      return { error, session: null };
+    }
+
+    if (data?.user?.id) {
+      try {
+        await assignUserRole(data.user.id, assignedRole);
+        const { data: refreshData } = await supabase.auth.refreshSession();
+        if (refreshData?.session) {
+          setSession(refreshData.session);
+          setUser(refreshData.user);
+          setRole(assignedRole);
+          if (typeof document !== 'undefined') {
+            document.cookie = `oiml_active_role=${assignedRole}; path=/; max-age=86400; SameSite=Lax`;
+          }
+          return { error: null, session: refreshData.session };
+        }
+      } catch (roleErr) {
+        console.warn('Backend role assignment sync note:', roleErr);
+      }
+    }
 
     if (data?.session) {
       setSession(data.session);

@@ -285,8 +285,13 @@ export default function EvaluationsPage() {
       .then((standards) => {
         setReferenceStandards(standards);
         const activeStandard = standards.find((standard) => standard.is_active && !standard.is_expired);
-        if (activeStandard && !standards.some((standard) => standard.set_identifier === ambientSetup.reference_standard)) {
-          setAmbientSetup((prev) => ({ ...prev, reference_standard: activeStandard.set_identifier }));
+        if (activeStandard) {
+          setAmbientSetup((prev) => {
+            if (standards.some((standard) => standard.set_identifier === prev.reference_standard)) {
+              return prev;
+            }
+            return { ...prev, reference_standard: activeStandard.set_identifier };
+          });
         }
       })
       .catch((error) => console.error('Reference standards error:', error));
