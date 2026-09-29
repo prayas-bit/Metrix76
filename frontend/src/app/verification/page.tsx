@@ -17,7 +17,7 @@ import {
   Eye,
   FileText
 } from 'lucide-react';
-import { submitVerificationAction, searchArchive, getReportDetail } from '@/lib/api';
+import { submitVerificationAction, searchArchive, getReportDetail, getReportPdfUrl } from '@/lib/api';
 import { TestReportSummary, TestReportDetail } from '@/types/metrology';
 import { formatDate } from '@/lib/utils';
 
@@ -331,10 +331,10 @@ export default function VerificationConsolePage() {
                   )}
                   <div className="pt-2 flex items-center gap-3">
                     <a
-                      href={`http://localhost:8000/api/v1/documents/${reportDetail.id}/pdf`}
+                      href={getReportPdfUrl(reportDetail.id)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+                      className="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       <span>Download Official PDF</span>

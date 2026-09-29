@@ -21,7 +21,7 @@ import {
   Eye,
   QrCode
 } from 'lucide-react';
-import { getReportDetail, submitVerificationAction } from '@/lib/api';
+import { getReportDetail, submitVerificationAction, getReportPdfUrl, getReportDocxUrl } from '@/lib/api';
 import ToleranceCorridor from '@/components/worksheets/ToleranceCorridor';
 import { formatDate } from '@/lib/utils';
 
@@ -196,7 +196,7 @@ export default function ApproverReviewPage({ params }: { params: Promise<{ id: s
           {isApproved && (
             <div className="flex items-center gap-2">
               <a
-                href={`/api/v1/documents/reports/${report.id}/generate-pdf`}
+                href={getReportPdfUrl(report.id)}
                 target="_blank"
                 rel="noreferrer"
                 className="px-3.5 py-2 bg-blue-900 text-white text-xs font-bold rounded-xl shadow-xs hover:bg-blue-800 transition-all flex items-center gap-1.5"
@@ -205,7 +205,7 @@ export default function ApproverReviewPage({ params }: { params: Promise<{ id: s
                 Download PDF
               </a>
               <a
-                href={`/api/v1/documents/reports/${report.id}/generate-docx`}
+                href={getReportDocxUrl(report.id)}
                 target="_blank"
                 rel="noreferrer"
                 className="px-3.5 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs hover:bg-slate-700 transition-all flex items-center gap-1.5"

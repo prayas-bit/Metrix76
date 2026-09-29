@@ -18,7 +18,7 @@ import {
   FileCheck2,
   RefreshCw
 } from 'lucide-react';
-import { searchArchive } from '@/lib/api';
+import { searchArchive, getReportPdfUrl } from '@/lib/api';
 import { TestReportSummary, AccuracyClass, ReportStatus } from '@/types/metrology';
 import { formatDate } from '@/lib/utils';
 import LifecycleDrawer from '@/components/archive/LifecycleDrawer';
@@ -230,7 +230,7 @@ export default function RepositoryPage() {
                         {isApproved && (
                           <>
                             <a
-                              href={`/api/v1/documents/reports/${rep.id}/generate-pdf`}
+                              href={getReportPdfUrl(rep.id)}
                               target="_blank"
                               rel="noreferrer"
                               className="inline-flex items-center gap-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-800 px-2 py-1 rounded-lg font-semibold transition-colors"
