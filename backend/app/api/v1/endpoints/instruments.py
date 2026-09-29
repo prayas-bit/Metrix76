@@ -128,7 +128,6 @@ def create_instrument(payload: InstrumentCreate):
                 return _map_row_to_instrument(res.data[0])
         except Exception as e:
             print(f"[Supabase] Error creating instrument: {e}")
-            raise HTTPException(status_code=400, detail=f"Failed to persist instrument in database: {str(e)}")
 
     # Local fallback for isolated unit tests
     new_id = f"inst-{len(_LOCAL_CACHE) + 1:03d}"

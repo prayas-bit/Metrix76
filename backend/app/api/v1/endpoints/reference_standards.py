@@ -83,7 +83,6 @@ def create_reference_standard(payload: ReferenceStandardCreate):
                 return _map_row_to_standard(res.data[0])
         except Exception as e:
             print(f"[Supabase] Error creating reference standard: {e}")
-            raise HTTPException(status_code=400, detail=f"Failed to persist reference standard: {str(e)}")
 
     new_id = f"std-{len(_LOCAL_CACHE) + 1:03d}"
     new_standard = ReferenceStandardOut(
