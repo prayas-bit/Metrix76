@@ -2,12 +2,16 @@ from fastapi import APIRouter, HTTPException, Query
 from datetime import datetime, date, timezone
 from typing import List, Optional
 from app.schemas.report import (
+    BatchObservationPayload,
+    ReportSubmissionResponse,
+    TestObservationRowPayload,
+    TestReportCreate,
     TestReportSummary,
     TestReportDetail,
     PublicVerificationResponse,
     ReportStatus,
     EnvironmentalConditions,
-    TechnicalChecklist
+    TechnicalChecklist,
 )
 from app.schemas.instrument import InstrumentOut
 from app.schemas.reference_standard import ReferenceStandardOut
@@ -126,6 +130,217 @@ def _map_row_to_report_detail(row: dict) -> TestReportDetail:
         approved_at=datetime.fromisoformat(row["approved_at"].replace("Z", "+00:00")) if row.get("approved_at") else None,
         created_at=datetime.fromisoformat(row["created_at"].replace("Z", "+00:00")) if "created_at" in row else datetime.now(timezone.utc),
         updated_at=datetime.fromisoformat(row["updated_at"].replace("Z", "+00:00")) if "updated_at" in row else datetime.now(timezone.utc)
+    )
+
+
+
+def _get_report_or_404(report_id: str) -> TestReportDetail:
+    rep = next((r for r in REPORTS_DB if r.id == report_id), None)
+    if not rep:
+        raise HTTPException(status_code=404, detail="Test report not found")
+    return rep
+
+
+@router.post("/draft", response_model=TestReportDetail, status_code=status.HTTP_201_CREATED)
+def create_report_draft(payload: TestReportCreate):
+    """
+    Creates a new draft evaluation report in the active technician workflow.
+    """
+    instrument = next((item for item in INSTRUMENTS_DB if item.id == payload.instrument_id), None)
+    if not instrument:
+        raise HTTPException(status_code=404, detail="Instrument not found")
+
+    standard = next((item for item in STANDARDS_DB if item.id == payload.reference_standard_id), None)
+    if not standard:
+        raise HTTPException(status_code=404, detail="Reference standard not found")
+
+    if not standard.is_active or standard.expiry_date < date.today():
+        raise HTTPException(status_code=422, detail="Selected reference standard is expired or inactive")
+
+    now = datetime.now()
+    report_id = f"rep-{len(REPORTS_DB) + 101:03d}"
+    draft = TestReportDetail(
+        id=report_id,
+        report_number=f"OIML-{now.year}-TR-{len(REPORTS_DB) + 1:04d}",
+        attempt_number=1,
+        status=ReportStatus.DRAFT,
+        standard_version="OIML R 76-1:2006",
+        instrument=instrument,
+        reference_standard=standard,
+        environment=EnvironmentalConditions(
+            ambient_temperature_celsius=payload.ambient_temperature_celsius,
+            relative_humidity_pct=payload.relative_humidity_pct,
+            atmospheric_pressure_hpa=payload.atmospheric_pressure_hpa,
+        ),
+        technical_checklist=payload.technical_checklist,
+        overall_verdict=None,
+        rejection_reason=None,
+        sha256_hash=None,
+        pdf_storage_path=None,
+        docx_storage_path=None,
+        weighing_observations=[],
+        repeatability_results=[],
+        eccentricity_results=[],
+        conducted_by="Technician Draft",
+        approved_by=None,
+        approved_at=None,
+        created_at=now,
+        updated_at=now,
+    )
+    REPORTS_DB.append(draft)
+    REPORT_OBSERVATIONS_DB.setdefault(report_id, [])
+    return draft
+
+
+@router.put("/{report_id}/observations")
+def upsert_report_observations(report_id: str, payload: BatchObservationPayload):
+    """
+    Batch-upsert test rows for a draft or in-progress report.
+    """
+    rep = _get_report_or_404(report_id)
+    if payload.report_id != report_id:
+        raise HTTPException(status_code=400, detail="Observation payload report_id must match the route report_id")
+
+    merged = {(
+        obs.test_type.value,
+        obs.direction.value,
+        obs.sequence_order,
+        obs.position_tag or "",
+        obs.run_cycle or 0,
+    ): obs for obs in REPORT_OBSERVATIONS_DB.get(report_id, [])}
+
+    for obs in payload.observations:
+        merged[(
+            obs.test_type.value,
+            obs.direction.value,
+            obs.sequence_order,
+            obs.position_tag or "",
+            obs.run_cycle or 0,
+        )] = obs
+
+    REPORT_OBSERVATIONS_DB[report_id] = list(merged.values())
+    rep.updated_at = datetime.now()
+    return {"report_id": report_id, "observations": REPORT_OBSERVATIONS_DB[report_id]}
+
+
+def _validate_observations_completeness(observations: List[TestObservationRowPayload]) -> None:
+    """
+    Validates that the observation payload contains the required test measurement groups
+    and complete test data according to OIML R 76 requirements.
+    """
+    grouped_by_type: Dict[str, List[TestObservationRowPayload]] = {}
+    for obs in observations:
+        key = obs.test_type.value if hasattr(obs.test_type, "value") else str(obs.test_type)
+        grouped_by_type.setdefault(key, []).append(obs)
+
+    # 1. Weighing Performance (Clause A.4.4): Mandatory core test
+    weighing_obs = grouped_by_type.get("WEIGHING", [])
+    if not weighing_obs:
+        raise HTTPException(
+            status_code=422,
+            detail="Submission rejected: Weighing performance test observations (Clause A.4.4) are required.",
+        )
+
+    if len(weighing_obs) < 5:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Submission rejected: Weighing performance test requires at least 5 observation points across the range, found {len(weighing_obs)}.",
+        )
+
+    # Validate that increasing and decreasing directions or zero baseline exist
+    directions = {obs.direction.value if hasattr(obs.direction, "value") else str(obs.direction) for obs in weighing_obs}
+    has_increasing = "INCREASING" in directions
+    has_zero_or_preload = any(abs(obs.load_applied) < 1e-7 for obs in weighing_obs)
+    if not has_increasing or not has_zero_or_preload:
+        raise HTTPException(
+            status_code=422,
+            detail="Submission rejected: Weighing performance test must include a zero-load point (L=0) and INCREASING direction observations.",
+        )
+
+    # 2. Check completeness for additional present test groups
+    ecc_obs = grouped_by_type.get("ECCENTRICITY", [])
+    if ecc_obs:
+        if len(ecc_obs) < 4:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Submission rejected: Eccentricity test (Clause A.4.7) requires at least 4 test positions, found {len(ecc_obs)}.",
+            )
+        positions = {(obs.position_tag or "").upper() for obs in ecc_obs}
+        if not ("CENTER" in positions or "POSITION_1" in positions or len(positions) >= 4):
+            raise HTTPException(
+                status_code=422,
+                detail="Submission rejected: Eccentricity test must include distinct receptor positions (including center).",
+            )
+
+    rep_obs = grouped_by_type.get("REPEATABILITY", [])
+    if rep_obs:
+        if len(rep_obs) < 3:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Submission rejected: Repeatability test (Clause A.4.10) requires at least 3 repeat measurements per series, found {len(rep_obs)} total.",
+            )
+
+    tare_obs = grouped_by_type.get("TARE_ZERO", [])
+    if tare_obs:
+        if len(tare_obs) < 1:
+            raise HTTPException(
+                status_code=422,
+                detail="Submission rejected: Tare/Zero test requires at least one operative verification record.",
+            )
+
+
+@router.post("/{report_id}/submit", response_model=ReportSubmissionResponse)
+def submit_report(report_id: str):
+    """
+    Validates mandatory report data, reference standard validity, environmental conditions,
+    and observation completeness across measurement groups, then transitions the report
+    to the PENDING_APPROVAL review queue.
+    """
+    rep = _get_report_or_404(report_id)
+
+    if not rep.instrument:
+        raise HTTPException(status_code=422, detail="Submission rejected: Instrument passport is required")
+
+    if not rep.reference_standard:
+        raise HTTPException(status_code=422, detail="Submission rejected: Reference standard is required")
+
+    if rep.reference_standard.expiry_date < date.today() or not rep.reference_standard.is_active:
+        raise HTTPException(
+            status_code=422,
+            detail="Submission rejected: Reference standard is expired or inactive (ISO 17025 guardrail)",
+        )
+
+    # Validate Environmental Conditions
+    if rep.environment:
+        temp = rep.environment.ambient_temperature_celsius
+        rh = rep.environment.relative_humidity_pct
+        min_temp = rep.environment.temp_min_allowed if rep.environment.temp_min_allowed is not None else -10.0
+        max_temp = rep.environment.temp_max_allowed if rep.environment.temp_max_allowed is not None else 40.0
+
+        if not (min_temp <= temp <= max_temp):
+            raise HTTPException(
+                status_code=422,
+                detail=f"Submission rejected: Ambient temperature ({temp}°C) exceeds operational limits ({min_temp}°C to {max_temp}°C).",
+            )
+        if not (10.0 <= rh <= 90.0):
+            raise HTTPException(
+                status_code=422,
+                detail=f"Submission rejected: Relative humidity ({rh}%) is outside acceptable range (10% - 90%).",
+            )
+
+    # Validate Observation Completeness across measurement groups
+    observations = REPORT_OBSERVATIONS_DB.get(report_id, [])
+    if not observations:
+        raise HTTPException(status_code=422, detail="Submission rejected: No test observations recorded for this report")
+
+    _validate_observations_completeness(observations)
+
+    rep.status = ReportStatus.PENDING_APPROVAL
+    rep.updated_at = datetime.now()
+    return ReportSubmissionResponse(
+        report_id=rep.id,
+        status=rep.status,
+        message="Report submitted for approval successfully"
     )
 
 
