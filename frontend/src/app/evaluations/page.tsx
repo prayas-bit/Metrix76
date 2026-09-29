@@ -661,21 +661,21 @@ export default function EvaluationsPage() {
   const renderWizardStepContent = () => {
     if (wizardStep === 1) {
       return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white p-6 sm:p-8 border border-editorial-border shadow-editorial space-y-5">
+          <div className="flex items-center justify-between border-b border-editorial-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Step 1 • Instrument Passport</h3>
-              <p className="text-xs text-slate-500">Capture the scale configuration for the live test packet.</p>
+              <h3 className="font-display font-bold text-base uppercase text-ink-950">STEP 1 • INSTRUMENT PASSPORT</h3>
+              <p className="text-[11px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">Capture the scale configuration for the live test packet.</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-            <label className="text-xs text-slate-600 font-medium">
-              Accuracy Class
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              ACCURACY CLASS
               <select
                 value={instrument.accuracy_class}
                 onChange={(event) => updateInstrumentField('accuracy_class', event.target.value as InstrumentMeta['accuracy_class'])}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               >
                 <option value="CLASS_I">CLASS_I</option>
                 <option value="CLASS_II">CLASS_II</option>
@@ -684,56 +684,56 @@ export default function EvaluationsPage() {
               </select>
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Unit
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              UNIT OF MEASUREMENT
               <input
                 value={instrument.unit}
                 onChange={(event) => updateInstrumentField('unit', event.target.value)}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Max Capacity (kg)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              MAX CAPACITY (kg)
               <input
                 type="number"
                 step="any"
                 value={instrument.max_capacity}
                 onChange={(event) => updateInstrumentField('max_capacity', Number(event.target.value) || 0)}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Min Capacity (kg)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              MIN CAPACITY (kg)
               <input
                 type="number"
                 step="any"
                 value={instrument.min_capacity}
                 onChange={(event) => updateInstrumentField('min_capacity', Number(event.target.value) || 0)}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Interval d (kg)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              INTERVAL d (kg)
               <input
                 type="number"
                 step="any"
                 value={instrument.scale_interval_d}
                 onChange={(event) => updateInstrumentField('scale_interval_d', Number(event.target.value) || 0)}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Verification Interval e (kg)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              VERIFICATION INTERVAL e (kg)
               <input
                 type="number"
                 step="any"
                 value={instrument.verification_interval_e}
                 onChange={(event) => updateInstrumentField('verification_interval_e', Number(event.target.value) || 0)}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
           </div>
@@ -743,67 +743,67 @@ export default function EvaluationsPage() {
 
     if (wizardStep === 2) {
       return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white p-6 sm:p-8 border border-editorial-border shadow-editorial space-y-5">
+          <div className="flex items-center justify-between border-b border-editorial-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Step 2 • Ambient Setup</h3>
-              <p className="text-xs text-slate-500">Record the exposure conditions and traceability reference before running the worksheets.</p>
+              <h3 className="font-display font-bold text-base uppercase text-ink-950">STEP 2 • AMBIENT SETUP</h3>
+              <p className="text-[11px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">Record the exposure conditions and traceability reference before running worksheets.</p>
             </div>
           </div>
 
           {standardIsBlocked && (
-            <div className="rounded-xl border border-rose-300 bg-rose-50 p-3 text-sm text-rose-900">
-              <strong>ISO 17025 guardrail:</strong> the selected reference standard is expired or inactive, so progression to the worksheets is blocked until a valid set is chosen.
+            <div className="border border-neutral-900 bg-neutral-900 text-rose-400 p-4 text-xs font-mono">
+              <strong>ISO 17025 GUARDRAIL:</strong> The selected reference standard is expired or inactive. Progression to worksheets is blocked until a valid set is chosen.
             </div>
           )}
 
           <div className="grid md:grid-cols-2 gap-4">
-            <label className="text-xs text-slate-600 font-medium">
-              Temperature (°C)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              TEMPERATURE (°C)
               <input
                 type="number"
                 step="any"
                 value={ambientSetup.temperature_c}
                 onChange={(event) => setAmbientSetup((prev) => ({ ...prev, temperature_c: Number(event.target.value) || 0 }))}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Relative Humidity (%)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              RELATIVE HUMIDITY (%)
               <input
                 type="number"
                 step="any"
                 value={ambientSetup.humidity_pct}
                 onChange={(event) => setAmbientSetup((prev) => ({ ...prev, humidity_pct: Number(event.target.value) || 0 }))}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Atmospheric Pressure (hPa)
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              ATMOSPHERIC PRESSURE (hPa)
               <input
                 type="number"
                 step="any"
                 value={ambientSetup.pressure_hpa}
                 onChange={(event) => setAmbientSetup((prev) => ({ ...prev, pressure_hpa: Number(event.target.value) || 0 }))}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               />
             </label>
 
-            <label className="text-xs text-slate-600 font-medium">
-              Reference Standard Set
+            <label className="text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest">
+              REFERENCE STANDARD SET
               <select
                 value={ambientSetup.reference_standard}
                 onChange={(event) => setAmbientSetup((prev) => ({ ...prev, reference_standard: event.target.value }))}
-                className="mt-1 w-full border border-slate-300 rounded px-2 py-2 bg-white"
+                className="mt-1.5 w-full bg-alabaster-50 border border-editorial-border px-3 py-2 text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
               >
                 {referenceStandards.length === 0 ? (
                   <option value="">Loading standards…</option>
                 ) : (
                   referenceStandards.map((standard) => (
                     <option key={standard.id} value={standard.set_identifier}>
-                      {standard.set_identifier} ({standard.is_expired ? 'expired' : standard.days_to_expiry + 'd left'})
+                      {standard.set_identifier} ({standard.is_expired ? 'EXPIRED' : standard.days_to_expiry + 'd left'})
                     </option>
                   ))
                 )}
@@ -812,19 +812,19 @@ export default function EvaluationsPage() {
           </div>
 
           {selectedStandard && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+            <div className="border border-editorial-border bg-alabaster-50 p-4 text-xs font-mono text-ink-700">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-semibold text-slate-700">Selected standard</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                <span className="font-bold uppercase">SELECTED REFERENCE STANDARD</span>
+                <span className={`px-2 py-0.5 text-[9px] font-bold uppercase border ${
                   selectedStandard.is_expired || !selectedStandard.is_active
-                    ? 'bg-rose-100 text-rose-800'
-                    : 'bg-emerald-100 text-emerald-800'
+                    ? 'bg-neutral-900 text-rose-400 border-neutral-700'
+                    : 'bg-white text-emerald-800 border-emerald-300'
                 }`}>
-                  {selectedStandard.is_expired || !selectedStandard.is_active ? 'Blocked' : 'Valid'}
+                  {selectedStandard.is_expired || !selectedStandard.is_active ? 'BLOCKED' : 'VALID & TRACEABLE'}
                 </span>
               </div>
-              <div className="mt-2 font-mono text-slate-800">{selectedStandard.set_identifier}</div>
-              <div className="mt-1">Expiry: {selectedStandard.expiry_date} • {selectedStandard.days_to_expiry} days remaining</div>
+              <div className="mt-2 font-bold text-ink-950">{selectedStandard.set_identifier}</div>
+              <div className="mt-1 text-[11px] text-ink-500">EXPIRY: {selectedStandard.expiry_date} • {selectedStandard.days_to_expiry} DAYS REMAINING</div>
             </div>
           )}
         </div>
@@ -834,7 +834,7 @@ export default function EvaluationsPage() {
     if (wizardStep === 3) {
       return (
         <div className="space-y-6">
-          <div className="bg-white px-4 py-3 rounded-xl border border-slate-200 flex flex-wrap gap-2">
+          <div className="bg-white p-3 border border-editorial-border flex flex-wrap gap-2 shadow-editorial">
             {[
               ['A_WEIGHING', 'Clause A.4.4: Weighing'],
               ['B_REPEATABILITY', 'Clause A.4.10: Repeatability'],
@@ -844,8 +844,8 @@ export default function EvaluationsPage() {
               <button
                 key={key}
                 onClick={() => setActiveTab(key as WorksheetTab)}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold ${
-                  activeTab === key ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  activeTab === key ? 'bg-ink-950 text-white shadow-editorial' : 'bg-alabaster-50 border border-editorial-border text-ink-700 hover:bg-alabaster-100'
                 }`}
               >
                 {label}
@@ -860,55 +860,55 @@ export default function EvaluationsPage() {
 
     if (wizardStep === 4) {
       return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white p-6 sm:p-8 border border-editorial-border shadow-editorial space-y-6">
+          <div className="flex items-center justify-between border-b border-editorial-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Step 4 • Review Summary</h3>
-              <p className="text-xs text-slate-500">Final sign-off review before the draft is submitted for approval.</p>
+              <h3 className="font-display font-bold text-base uppercase text-ink-950">STEP 4 • REVIEW SUMMARY</h3>
+              <p className="text-[11px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">Final sign-off review before the draft is submitted for approval.</p>
             </div>
             {submissionState === 'submitted' && (
-              <span className="rounded-full bg-amber-100 text-amber-800 px-2.5 py-1 text-[10px] font-bold uppercase">
-                Pending approval
+              <span className="bg-ink-950 text-white px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider">
+                PENDING APPROVAL
               </span>
             )}
           </div>
 
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-              <div className="text-[10px] uppercase tracking-wide text-slate-500">Instrument</div>
-              <div className="mt-2 font-bold text-slate-900">{instrument.accuracy_class}</div>
-              <div className="text-xs text-slate-600">{instrument.max_capacity} kg max</div>
+            <div className="border border-editorial-border p-4 bg-alabaster-50">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-ink-400">INSTRUMENT</div>
+              <div className="mt-2 font-display font-bold text-lg text-ink-950">{instrument.accuracy_class}</div>
+              <div className="text-xs font-mono text-ink-600">{instrument.max_capacity} kg max</div>
             </div>
 
-            <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-              <div className="text-[10px] uppercase tracking-wide text-slate-500">Ambient</div>
-              <div className="mt-2 font-bold text-slate-900">{ambientSetup.temperature_c} °C</div>
-              <div className="text-xs text-slate-600">{ambientSetup.humidity_pct}% RH / {ambientSetup.pressure_hpa} hPa</div>
+            <div className="border border-editorial-border p-4 bg-alabaster-50">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-ink-400">AMBIENT</div>
+              <div className="mt-2 font-display font-bold text-lg text-ink-950">{ambientSetup.temperature_c} °C</div>
+              <div className="text-xs font-mono text-ink-600">{ambientSetup.humidity_pct}% RH / {ambientSetup.pressure_hpa} hPa</div>
             </div>
 
-            <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-              <div className="text-[10px] uppercase tracking-wide text-slate-500">Overall Result</div>
-              <div className="mt-2 font-bold text-slate-900">
+            <div className="border border-editorial-border p-4 bg-alabaster-50">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-ink-400">OVERALL RESULT</div>
+              <div className="mt-2 font-display font-bold text-lg text-ink-950">
                 {evaluation?.overall_compliant ? 'COMPLIANT' : 'CHECK REQUIRED'}
               </div>
-              <div className="text-xs text-slate-600">{ambientSetup.reference_standard}</div>
+              <div className="text-xs font-mono text-ink-600">{ambientSetup.reference_standard}</div>
             </div>
           </div>
 
           {submissionError && (
-            <div className="rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-xs text-rose-800">
+            <div className="border border-neutral-900 bg-neutral-900 text-rose-400 p-4 text-xs font-mono">
               {submissionError}
             </div>
           )}
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-4 border-t border-editorial-border">
             <button
               type="button"
               onClick={handleSubmitForReview}
               disabled={submissionState === 'submitted'}
-              className="rounded-lg bg-blue-700 px-4 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-400"
+              className="bg-ink-950 hover:bg-neutral-800 disabled:opacity-40 text-white font-mono font-bold text-xs uppercase tracking-widest px-6 py-3 shadow-editorial transition-all cursor-pointer"
             >
-              {submissionState === 'submitted' ? 'Submitted for review' : 'Submit for review'}
+              {submissionState === 'submitted' ? 'SUBMITTED FOR REVIEW' : 'SUBMIT FOR DUAL-CUSTODY REVIEW'}
             </button>
           </div>
         </div>
@@ -924,38 +924,38 @@ export default function EvaluationsPage() {
         <div className="space-y-6">
           <ToleranceChart instrument={instrument} results={evaluation?.results || []} />
 
-          <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs">
-            <div className="flex items-center justify-between bg-slate-50 border-b border-slate-200 px-4 py-2">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-                <ClipboardList className="w-4 h-4 text-blue-700" />
-                <span>Keyboard-first worksheet</span>
+          <div className="border border-editorial-border overflow-hidden bg-white shadow-editorial">
+            <div className="flex items-center justify-between bg-alabaster-50 border-b border-editorial-border px-4 py-3">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-ink-900">
+                <ClipboardList className="w-4 h-4 text-ink-900" />
+                <span>KEYBOARD-FIRST WORKSHEET (CLAUSE A.4.4)</span>
               </div>
-              <div className="text-[10px] text-slate-500 flex items-center gap-1">
+              <div className="text-[10px] font-mono text-ink-500 uppercase tracking-wider flex items-center gap-1.5">
                 <Save className="w-3.5 h-3.5" />
-                Auto-saved to localStorage
+                AUTO-SAVED IN LOCAL ENCLAVE
               </div>
             </div>
 
             <table onPaste={handlePaste} className="w-full text-left text-xs border-collapse">
-              <thead className="bg-slate-100 border-b border-slate-200 text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
+              <thead className="bg-alabaster-100 border-b border-editorial-border text-ink-900 font-mono font-bold uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="p-3">Direction</th>
-                  <th className="p-3">Applied Load (L) [kg]</th>
-                  <th className="p-3">Indication (I) [kg]</th>
-                  <th className="p-3">ΔL [kg]</th>
-                  <th className="p-3 font-mono">P = I + 0.5e - ΔL</th>
-                  <th className="p-3 font-mono">Ec = E - E₀</th>
-                  <th className="p-3 font-mono">±mpe [kg]</th>
-                  <th className="p-3 text-center">Verdict</th>
+                  <th className="p-3.5">DIRECTION</th>
+                  <th className="p-3.5">LOAD (L) [kg]</th>
+                  <th className="p-3.5">INDICATION (I) [kg]</th>
+                  <th className="p-3.5">ΔL [kg]</th>
+                  <th className="p-3.5 font-mono">P = I + 0.5e - ΔL</th>
+                  <th className="p-3.5 font-mono">Ec = E - E₀</th>
+                  <th className="p-3.5 font-mono">±mpe [kg]</th>
+                  <th className="p-3.5 text-center">VERDICT</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-editorial-border">
                 {points.map((pt, idx) => {
                   const res = evaluation?.results[idx];
 
                   return (
-                    <tr key={idx} className="hover:bg-slate-50 transition-colors font-mono">
-                      <td className="p-3 text-slate-600 font-sans">
+                    <tr key={idx} className="hover:bg-alabaster-50 transition-colors font-mono">
+                      <td className="p-3 text-ink-700">
                         <select
                           ref={(element) => {
                             inputRefs.current[`${idx}-direction`] = element;
@@ -963,7 +963,7 @@ export default function EvaluationsPage() {
                           value={pt.direction}
                           onKeyDown={(event) => handleCellNavigation(event, idx, 'direction')}
                           onChange={(event) => updateCell(idx, 'direction', event.target.value as WeighingPointInput['direction'])}
-                          className="border border-slate-300 rounded px-1.5 py-1 text-xs outline-none bg-white font-sans"
+                          className="border border-editorial-border px-2 py-1 text-xs outline-none bg-alabaster-50 font-mono uppercase text-ink-950 focus:border-ink-950"
                         >
                           <option value="INCREASING">Increasing</option>
                           <option value="DECREASING">Decreasing</option>
@@ -981,7 +981,7 @@ export default function EvaluationsPage() {
                           value={pt.load_applied}
                           onKeyDown={(event) => handleCellNavigation(event, idx, 'load_applied')}
                           onChange={(event) => updateCell(idx, 'load_applied', Number(event.target.value) || 0)}
-                          className="border border-slate-300 rounded px-2 py-1 w-24 outline-none focus:border-blue-500 font-mono"
+                          className="border border-editorial-border px-2.5 py-1 w-24 outline-none focus:border-ink-950 font-mono bg-alabaster-50 text-ink-950"
                         />
                       </td>
 
@@ -995,7 +995,7 @@ export default function EvaluationsPage() {
                           value={pt.indication_observed}
                           onKeyDown={(event) => handleCellNavigation(event, idx, 'indication_observed')}
                           onChange={(event) => updateCell(idx, 'indication_observed', Number(event.target.value) || 0)}
-                          className="border border-slate-300 rounded px-2 py-1 w-24 outline-none focus:border-blue-500 font-mono"
+                          className="border border-editorial-border px-2.5 py-1 w-24 outline-none focus:border-ink-950 font-mono bg-alabaster-50 text-ink-950"
                         />
                       </td>
 
@@ -1009,18 +1009,18 @@ export default function EvaluationsPage() {
                           value={pt.delta_load}
                           onKeyDown={(event) => handleCellNavigation(event, idx, 'delta_load')}
                           onChange={(event) => updateCell(idx, 'delta_load', Number(event.target.value) || 0)}
-                          className="border border-slate-300 rounded px-2 py-1 w-20 outline-none focus:border-blue-500 font-mono"
+                          className="border border-editorial-border px-2 py-1 w-20 outline-none focus:border-ink-950 font-mono bg-alabaster-50 text-ink-950"
                         />
                       </td>
 
-                      <td className="p-3 text-slate-600 font-mono">{res?.calculated_p.toFixed(5) ?? '--'}</td>
-                      <td className="p-3 font-bold text-slate-900 font-mono">{res?.corrected_error_ec.toFixed(5) ?? '--'}</td>
-                      <td className="p-3 text-slate-500 font-mono">{res ? `±${res.mpe_allowed.toFixed(5)}` : '--'}</td>
-                      <td className="p-3 text-center font-sans">
+                      <td className="p-3 text-ink-700 font-mono">{res?.calculated_p.toFixed(5) ?? '--'}</td>
+                      <td className="p-3 font-bold text-ink-950 font-mono">{res?.corrected_error_ec.toFixed(5) ?? '--'}</td>
+                      <td className="p-3 text-ink-500 font-mono">{res ? `±${res.mpe_allowed.toFixed(5)}` : '--'}</td>
+                      <td className="p-3 text-center">
                         {res && (
-                          <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] tracking-wider uppercase ${
-                            res.status === 'PASS' ? 'bg-emerald-100 text-emerald-800' :
-                            res.status === 'WARN' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'
+                          <span className={`px-2.5 py-0.5 text-[9px] font-mono font-bold tracking-wider uppercase border ${
+                            res.status === 'PASS' ? 'bg-white text-emerald-800 border-emerald-300' :
+                            res.status === 'WARN' ? 'bg-neutral-100 text-amber-800 border-amber-300' : 'bg-neutral-900 text-rose-400 border-neutral-700'
                           }`}>
                             {res.status}
                           </span>
@@ -1033,16 +1033,16 @@ export default function EvaluationsPage() {
             </table>
           </div>
 
-          <div className="flex justify-between items-center text-xs">
+          <div className="flex justify-between items-center text-xs font-mono">
             <button
               onClick={handleAddObservationStep}
-              className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-semibold"
+              className="bg-ink-950 hover:bg-neutral-800 text-white px-5 py-2.5 font-bold uppercase tracking-wider shadow-editorial transition-colors cursor-pointer"
             >
-              + Add Observation Step
+              + ADD OBSERVATION STEP
             </button>
-            <div className="flex items-center gap-2 text-slate-500">
+            <div className="flex items-center gap-2 text-ink-400 text-[11px] uppercase">
               <ArrowRight className="w-3.5 h-3.5" />
-              <span>Tip: Excel rows paste cleanly into the grid</span>
+              <span>TIP: TAB / ENTER FOR RAPID DATA ENTRY • EXCEL PASTE SUPPORTED</span>
             </div>
           </div>
         </div>
@@ -1051,30 +1051,30 @@ export default function EvaluationsPage() {
 
     if (activeTab === 'B_REPEATABILITY') {
       return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white p-6 sm:p-8 border border-editorial-border shadow-editorial space-y-6">
+          <div className="flex items-center justify-between border-b border-editorial-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Repeatability Matrix</h3>
-              <p className="text-xs text-slate-500">Series A/B/C with running spread, sample deviation, and compliance checks.</p>
+              <h3 className="font-display font-bold text-base uppercase text-ink-950">REPEATABILITY MATRIX (CLAUSE A.4.10)</h3>
+              <p className="text-[11px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">Series A/B/C with running spread, sample standard deviation, and compliance check.</p>
             </div>
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">live</span>
+            <span className="bg-ink-950 text-white text-[9px] font-mono font-bold px-2.5 py-1 uppercase">LIVE EVAL</span>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-6">
             {repeatabilityData.map((series, seriesIndex) => {
               const metrics = evaluateRepeatabilitySeries(series, instrument);
 
               return (
-                <div key={series.id} className="border border-slate-200 rounded-lg p-3 bg-slate-50">
-                  <div className="flex justify-between text-[11px] font-semibold text-slate-600 mb-3">
+                <div key={series.id} className="border border-editorial-border p-5 bg-alabaster-50 space-y-4">
+                  <div className="flex justify-between text-xs font-mono font-bold uppercase tracking-wider text-ink-950 border-b border-editorial-border pb-2">
                     <span>{series.label}</span>
                     <span>{series.nominalLoad.toFixed(2)} kg</span>
                   </div>
 
                   <div className="space-y-2">
                     {series.readings.map((reading, readingIndex) => (
-                      <div key={`${series.id}-${readingIndex}`} className="grid grid-cols-[1fr_80px] gap-2 text-[11px]">
-                        <span className="text-slate-500">Obs {readingIndex + 1}</span>
+                      <div key={`${series.id}-${readingIndex}`} className="grid grid-cols-[1fr_80px] gap-2 text-xs font-mono items-center">
+                        <span className="text-ink-500">RUN {readingIndex + 1}</span>
                         <input
                           type="number"
                           step="any"
@@ -1082,40 +1082,40 @@ export default function EvaluationsPage() {
                           onChange={(event) =>
                             updateRepeatabilityReading(seriesIndex, readingIndex, Number(event.target.value) || 0)
                           }
-                          className="w-full border border-slate-300 rounded px-2 py-1 text-right bg-white"
+                          className="w-full border border-editorial-border px-2 py-1 text-right bg-white text-ink-950 font-mono outline-none focus:border-ink-950"
                         />
                       </div>
                     ))}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2 text-[10px] text-slate-700">
-                    <div className="bg-white rounded border border-slate-200 p-2">
-                      <div className="text-slate-500 uppercase">Pmax</div>
-                      <div className="font-bold mt-1">{metrics.pMax.toFixed(3)}</div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-[10px] font-mono">
+                    <div className="bg-white border border-editorial-border p-2">
+                      <div className="text-ink-400 uppercase">Pmax</div>
+                      <div className="font-bold text-ink-950 mt-0.5">{metrics.pMax.toFixed(3)}</div>
                     </div>
-                    <div className="bg-white rounded border border-slate-200 p-2">
-                      <div className="text-slate-500 uppercase">Pmin</div>
-                      <div className="font-bold mt-1">{metrics.pMin.toFixed(3)}</div>
+                    <div className="bg-white border border-editorial-border p-2">
+                      <div className="text-ink-400 uppercase">Pmin</div>
+                      <div className="font-bold text-ink-950 mt-0.5">{metrics.pMin.toFixed(3)}</div>
                     </div>
-                    <div className="bg-white rounded border border-slate-200 p-2">
-                      <div className="text-slate-500 uppercase">ΔI</div>
-                      <div className="font-bold mt-1">{metrics.deltaI.toFixed(3)}</div>
+                    <div className="bg-white border border-editorial-border p-2">
+                      <div className="text-ink-400 uppercase">ΔI</div>
+                      <div className="font-bold text-ink-950 mt-0.5">{metrics.deltaI.toFixed(3)}</div>
                     </div>
-                    <div className="bg-white rounded border border-slate-200 p-2">
-                      <div className="text-slate-500 uppercase">s</div>
-                      <div className="font-bold mt-1">{metrics.standardDeviation.toFixed(3)}</div>
+                    <div className="bg-white border border-editorial-border p-2">
+                      <div className="text-ink-400 uppercase">s (STD DEV)</div>
+                      <div className="font-bold text-ink-950 mt-0.5">{metrics.standardDeviation.toFixed(3)}</div>
                     </div>
                   </div>
 
-                  <div className="mt-3 text-[10px] flex items-center justify-between rounded border px-2 py-1.5 bg-white">
-                    <span className="text-slate-500">±mpe</span>
-                    <span className="font-bold text-slate-800">{metrics.mpeAllowed.toFixed(3)}</span>
+                  <div className="text-[10px] font-mono flex items-center justify-between border border-editorial-border px-3 py-2 bg-white">
+                    <span className="text-ink-500">±mpe LIMIT</span>
+                    <span className="font-bold text-ink-950">{metrics.mpeAllowed.toFixed(3)}</span>
                   </div>
 
-                  <div className={`mt-2 text-center text-[10px] font-bold uppercase rounded-full px-2 py-1 ${
-                    metrics.isCompliant ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                  <div className={`text-center text-[10px] font-mono font-bold uppercase py-1 border ${
+                    metrics.isCompliant ? 'bg-white text-emerald-800 border-emerald-300' : 'bg-neutral-900 text-rose-400 border-neutral-700'
                   }`}>
-                    {metrics.isCompliant ? 'Compliant' : 'Non-compliant'}
+                    {metrics.isCompliant ? 'COMPLIANT (PASS)' : 'NON-COMPLIANT (FAIL)'}
                   </div>
                 </div>
               );
@@ -1127,22 +1127,22 @@ export default function EvaluationsPage() {
 
     if (activeTab === 'C_ECCENTRICITY') {
       return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white p-6 sm:p-8 border border-editorial-border shadow-editorial space-y-6">
+          <div className="flex items-center justify-between border-b border-editorial-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Eccentricity Platter</h3>
-              <p className="text-xs text-slate-500">Center and quadrant loading with automatic 1/3Max recommendation and per-position pass/fail.</p>
+              <h3 className="font-display font-bold text-base uppercase text-ink-950">ECCENTRICITY PLATTER (CLAUSE A.4.7)</h3>
+              <p className="text-[11px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">Center and quadrant loading with automatic 1/3Max recommendation and per-position error bounds.</p>
             </div>
-            <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">live</span>
+            <span className="bg-ink-950 text-white text-[9px] font-mono font-bold px-2.5 py-1 uppercase">LIVE EVAL</span>
           </div>
 
-          <div className="grid lg:grid-cols-[220px_1fr] gap-5">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-              <svg viewBox="0 0 220 220" className="w-full h-auto rounded-lg bg-white border border-slate-200">
-                <rect x="20" y="20" width="180" height="180" rx="16" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" />
-                <circle cx="110" cy="110" r="78" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1.5" />
-                <line x1="110" y1="20" x2="110" y2="200" stroke="#cbd5e1" strokeWidth="1.5" />
-                <line x1="20" y1="110" x2="200" y2="110" stroke="#cbd5e1" strokeWidth="1.5" />
+          <div className="grid lg:grid-cols-[240px_1fr] gap-6">
+            <div className="bg-alabaster-50 border border-editorial-border p-5">
+              <svg viewBox="0 0 220 220" className="w-full h-auto bg-white border border-editorial-border">
+                <rect x="20" y="20" width="180" height="180" rx="4" fill="#FAFAF9" stroke="#E2E2DE" strokeWidth="2" />
+                <circle cx="110" cy="110" r="78" fill="#F6F6F4" stroke="#D3D3CD" strokeWidth="1.5" />
+                <line x1="110" y1="20" x2="110" y2="200" stroke="#E2E2DE" strokeWidth="1.5" />
+                <line x1="20" y1="110" x2="200" y2="110" stroke="#E2E2DE" strokeWidth="1.5" />
 
                 {Object.entries(eccentricityLayout).map(([tag, position]) => {
                   const isActive = tag === activeEccentricityPosition;
@@ -1153,25 +1153,25 @@ export default function EvaluationsPage() {
                       <circle
                         cx={position.x}
                         cy={position.y}
-                        r={isActive ? 11 : 8}
-                        fill={result?.is_compliant ? '#22c55e' : '#f87171'}
-                        stroke={isActive ? '#1d4ed8' : '#475569'}
-                        strokeWidth={isActive ? 3 : 1.5}
+                        r={isActive ? 12 : 9}
+                        fill={isActive ? '#0A0A0A' : result?.is_compliant ? '#171717' : '#DC2626'}
+                        stroke={isActive ? '#FFFFFF' : '#0A0A0A'}
+                        strokeWidth={isActive ? 2 : 1}
                       />
-                      <text x={position.x} y={position.y + 3} textAnchor="middle" fontSize="7" fill="#fff" fontWeight="700">
+                      <text x={position.x} y={position.y + 3} textAnchor="middle" fontSize="7" fill="#fff" fontFamily="monospace" fontWeight="700">
                         {tag.slice(0, 1)}
                       </text>
                     </g>
                   );
                 })}
               </svg>
-              <div className="mt-3 flex items-center justify-between text-[10px] text-slate-600">
-                <span>Recommended load</span>
-                <span className="font-bold text-slate-900">{eccentricityEvaluation?.recommended_load.toFixed(2) ?? '--'} kg</span>
+              <div className="mt-4 flex items-center justify-between text-[11px] font-mono text-ink-600 border-t border-editorial-border pt-3">
+                <span>RECOMMENDED LOAD</span>
+                <span className="font-bold text-ink-950">{eccentricityEvaluation?.recommended_load.toFixed(2) ?? '--'} kg</span>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid md:grid-cols-2 gap-4">
               {eccentricityPoints.map((point) => {
                 const result = eccentricityEvaluation?.results.find((item) => item.position_tag === point.position_tag);
 
@@ -1179,24 +1179,24 @@ export default function EvaluationsPage() {
                   <div
                     key={point.position_tag}
                     onClick={() => setActiveEccentricityPosition(point.position_tag)}
-                    className={`border rounded-lg p-3 bg-slate-50 transition-colors ${
+                    className={`border p-4 bg-alabaster-50 transition-all cursor-pointer ${
                       activeEccentricityPosition === point.position_tag
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-slate-200'
+                        ? 'border-ink-950 bg-white shadow-editorial'
+                        : 'border-editorial-border hover:border-neutral-400'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-slate-700 mb-2">
+                    <div className="flex items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-ink-950 mb-3 border-b border-editorial-border pb-2">
                       <span>{point.position_tag.replace('_', ' ')}</span>
-                      <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${
-                        result?.is_compliant ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                      <span className={`px-2 py-0.5 text-[9px] font-mono font-bold uppercase border ${
+                        result?.is_compliant ? 'bg-white text-emerald-800 border-emerald-300' : 'bg-neutral-900 text-rose-400 border-neutral-700'
                       }`}>
                         {result ? (result.is_compliant ? 'PASS' : 'FAIL') : 'LIVE'}
                       </span>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="block text-[10px] text-slate-500">
-                        Applied load
+                    <div className="space-y-3 font-mono text-xs">
+                      <label className="block text-[10px] text-ink-500 uppercase tracking-widest">
+                        APPLIED LOAD
                         <input
                           type="number"
                           step="any"
@@ -1204,12 +1204,12 @@ export default function EvaluationsPage() {
                           onChange={(event) =>
                             updateEccentricityPoint(point.position_tag, 'load_applied', Number(event.target.value) || 0)
                           }
-                          className="mt-1 w-full border border-slate-300 rounded px-2 py-1 text-right bg-white"
+                          className="mt-1 w-full border border-editorial-border px-2.5 py-1 text-right bg-white text-ink-950 outline-none focus:border-ink-950"
                         />
                       </label>
 
-                      <label className="block text-[10px] text-slate-500">
-                        Indication
+                      <label className="block text-[10px] text-ink-500 uppercase tracking-widest">
+                        INDICATION
                         <input
                           type="number"
                           step="any"
@@ -1217,11 +1217,11 @@ export default function EvaluationsPage() {
                           onChange={(event) =>
                             updateEccentricityPoint(point.position_tag, 'indication_observed', Number(event.target.value) || 0)
                           }
-                          className="mt-1 w-full border border-slate-300 rounded px-2 py-1 text-right bg-white"
+                          className="mt-1 w-full border border-editorial-border px-2.5 py-1 text-right bg-white text-ink-950 outline-none focus:border-ink-950"
                         />
                       </label>
 
-                      <label className="block text-[10px] text-slate-500">
+                      <label className="block text-[10px] text-ink-500 uppercase tracking-widest">
                         ΔL
                         <input
                           type="number"
@@ -1230,19 +1230,19 @@ export default function EvaluationsPage() {
                           onChange={(event) =>
                             updateEccentricityPoint(point.position_tag, 'delta_load', Number(event.target.value) || 0)
                           }
-                          className="mt-1 w-full border border-slate-300 rounded px-2 py-1 text-right bg-white"
+                          className="mt-1 w-full border border-editorial-border px-2.5 py-1 text-right bg-white text-ink-950 outline-none focus:border-ink-950"
                         />
                       </label>
                     </div>
 
-                    <div className="mt-2 text-[10px] text-slate-500 grid grid-cols-2 gap-2">
-                      <div className="bg-white rounded border border-slate-200 p-1.5">
+                    <div className="mt-3 text-[10px] font-mono text-ink-500 grid grid-cols-2 gap-2 border-t border-editorial-border pt-2">
+                      <div className="bg-white border border-editorial-border p-2">
                         <div className="uppercase">P</div>
-                        <div className="font-bold text-slate-800">{result ? result.calculated_p.toFixed(3) : '--'}</div>
+                        <div className="font-bold text-ink-950 mt-0.5">{result ? result.calculated_p.toFixed(3) : '--'}</div>
                       </div>
-                      <div className="bg-white rounded border border-slate-200 p-1.5">
+                      <div className="bg-white border border-editorial-border p-2">
                         <div className="uppercase">Ec</div>
-                        <div className="font-bold text-slate-800">{result ? result.corrected_error_ec.toFixed(3) : '--'}</div>
+                        <div className="font-bold text-ink-950 mt-0.5">{result ? result.corrected_error_ec.toFixed(3) : '--'}</div>
                       </div>
                     </div>
                   </div>
@@ -1258,20 +1258,20 @@ export default function EvaluationsPage() {
       const overallZeroCompliant = Object.values(tareZeroResults).every((entry) => entry.compliant);
 
       return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white p-6 sm:p-8 border border-editorial-border shadow-editorial space-y-6">
+          <div className="flex items-center justify-between border-b border-editorial-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Tare & Zero Verification</h3>
-              <p className="text-xs text-slate-500">Zero-setting, zero-tracking, and tare residual checks with ±0.25e guardrail.</p>
+              <h3 className="font-display font-bold text-base uppercase text-ink-950">TARE & ZERO VERIFICATION (CLAUSES A.4.2 & A.4.6)</h3>
+              <p className="text-[11px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">Zero-setting, zero-tracking, and tare balancing residual checks with ±0.25e statutory guardrail.</p>
             </div>
-            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ${
-              overallZeroCompliant ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+            <span className={`text-[10px] font-mono font-bold px-2.5 py-1 uppercase border ${
+              overallZeroCompliant ? 'bg-white text-emerald-800 border-emerald-300' : 'bg-neutral-100 text-amber-800 border-amber-300'
             }`}>
-              {overallZeroCompliant ? 'guarded' : 'review'}
+              {overallZeroCompliant ? 'GUARDED (PASS)' : 'REVIEW REQUIRED'}
             </span>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-3">
+          <div className="grid md:grid-cols-3 gap-4">
             {[
               ['zeroSetting', 'Zero Setting'],
               ['zeroTracking', 'Zero Tracking'],
@@ -1280,11 +1280,11 @@ export default function EvaluationsPage() {
               const entry = tareZeroResults[key as keyof typeof tareZeroResults];
 
               return (
-                <div key={key} className="border border-slate-200 rounded-lg p-3 bg-slate-50 space-y-3">
-                  <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-slate-700">
+                <div key={key} className="border border-editorial-border p-4 bg-alabaster-50 space-y-3 font-mono">
+                  <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-ink-950 border-b border-editorial-border pb-2">
                     <span>{label}</span>
-                    <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${
-                      entry.compliant ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    <span className={`px-2 py-0.5 text-[9px] uppercase border ${
+                      entry.compliant ? 'bg-white text-emerald-800 border-emerald-300' : 'bg-neutral-900 text-rose-400 border-neutral-700'
                     }`}>
                       {entry.compliant ? 'PASS' : 'FAIL'}
                     </span>
@@ -1297,17 +1297,17 @@ export default function EvaluationsPage() {
                     onChange={(event) =>
                       updateTareZeroField(key as keyof typeof tareZeroState, Number(event.target.value) || 0)
                     }
-                    className="w-full border border-slate-300 rounded px-2 py-1 text-right bg-white"
+                    className="w-full border border-editorial-border px-3 py-1.5 text-right bg-white text-ink-950 text-xs font-mono outline-none focus:border-ink-950"
                   />
 
-                  <div className="space-y-1 text-[10px] text-slate-500">
+                  <div className="space-y-1 text-[10px] text-ink-500 pt-1">
                     <div className="flex items-center justify-between">
-                      <span>Residual</span>
-                      <span className="font-bold text-slate-700">{entry.value.toFixed(4)}</span>
+                      <span>RESIDUAL:</span>
+                      <span className="font-bold text-ink-950">{entry.value.toFixed(4)}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Limit</span>
-                      <span className="font-bold text-slate-700">±{entry.limit.toFixed(4)}</span>
+                      <span>LIMIT (±0.25e):</span>
+                      <span className="font-bold text-ink-950">±{entry.limit.toFixed(4)}</span>
                     </div>
                   </div>
                 </div>
@@ -1315,11 +1315,11 @@ export default function EvaluationsPage() {
             })}
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+          <div className="border border-editorial-border bg-alabaster-50 p-4 text-xs font-mono text-ink-700">
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-slate-700">Overall Clause A.4.2 / A.4.6 status</span>
+              <span className="font-bold uppercase">OVERALL CLAUSE A.4.2 / A.4.6 VERDICT:</span>
               <span className={`font-bold uppercase ${overallZeroCompliant ? 'text-emerald-700' : 'text-amber-700'}`}>
-                {overallZeroCompliant ? 'Compliant' : 'Needs recheck'}
+                {overallZeroCompliant ? 'COMPLIANT (≤ ±0.25e)' : 'NEEDS RECHECK'}
               </span>
             </div>
           </div>
@@ -1331,23 +1331,28 @@ export default function EvaluationsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 border border-editorial-border shadow-editorial">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-            <Layers className="w-6 h-6 text-blue-800" />
-            <span>Live Test Evaluation Worksheet & Rule Engine</span>
-          </h1>
-          <p className="text-sm text-slate-500">
-            Real-time turning-point correction and statutory MPE verification with draft persistence and keyboard-first data entry.
+          <div className="flex items-center gap-3">
+            <h1 className="font-display font-black text-2xl tracking-tight uppercase text-ink-950">
+              EVALUATION WORKSHEET & RULE ENGINE
+            </h1>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-ink-950 text-white uppercase tracking-wider">
+              OIML R 76-1 / R 76-2
+            </span>
+          </div>
+          <p className="text-xs text-ink-500 font-mono mt-1">
+            CONTINUOUS TURNING-POINT CALCULATION (P = I + 0.5e - ΔL) • ±mpe CORRIDORS • LOCAL PERSISTENCE
           </p>
         </div>
 
         {evaluation && (
-          <div className={`px-4 py-2 rounded-xl font-bold text-xs tracking-wider uppercase border flex items-center gap-2 shadow-xs ${
+          <div className={`px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase border flex items-center gap-2 ${
             evaluation.overall_compliant
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-              : 'bg-rose-50 text-rose-800 border-rose-300'
+              ? 'bg-white text-emerald-800 border-emerald-300'
+              : 'bg-neutral-900 text-rose-400 border-neutral-700'
           }`}>
             {evaluation.overall_compliant ? (
               <>
@@ -1356,7 +1361,7 @@ export default function EvaluationsPage() {
               </>
             ) : (
               <>
-                <XCircle className="w-4 h-4 text-rose-600" />
+                <XCircle className="w-4 h-4 text-rose-500" />
                 <span>OVERALL VERDICT: NON-COMPLIANT</span>
               </>
             )}
@@ -1364,29 +1369,31 @@ export default function EvaluationsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 p-4 bg-white rounded-xl border border-slate-200 text-xs shadow-xs">
-        <div><span className="text-slate-400 block uppercase font-semibold text-[10px]">Class</span><span className="font-bold font-mono">{instrument.accuracy_class}</span></div>
-        <div><span className="text-slate-400 block uppercase font-semibold text-[10px]">Max Capacity</span><span className="font-bold font-mono">{instrument.max_capacity} kg</span></div>
-        <div><span className="text-slate-400 block uppercase font-semibold text-[10px]">Interval (e)</span><span className="font-bold font-mono">{instrument.verification_interval_e} kg</span></div>
-        <div><span className="text-slate-400 block uppercase font-semibold text-[10px]">Zero Error (E₀)</span><span className="font-bold font-mono text-blue-800">{evaluation?.zero_error_e0 ?? '--'} kg</span></div>
-        <div><span className="text-slate-400 block uppercase font-semibold text-[10px]">Draft Saved</span><span className="font-bold font-mono text-emerald-700">localStorage</span></div>
-        <div><span className="text-slate-400 block uppercase font-semibold text-[10px]">Status</span><span className="font-bold font-mono">DRAFT</span></div>
+      {/* Meta Specifications Ribbon */}
+      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 p-5 bg-white border border-editorial-border text-xs shadow-editorial">
+        <div><span className="text-ink-400 block uppercase font-mono text-[9px] tracking-wider">CLASS</span><span className="font-bold font-mono text-ink-950">{instrument.accuracy_class}</span></div>
+        <div><span className="text-ink-400 block uppercase font-mono text-[9px] tracking-wider">MAX CAPACITY</span><span className="font-bold font-mono text-ink-950">{instrument.max_capacity} kg</span></div>
+        <div><span className="text-ink-400 block uppercase font-mono text-[9px] tracking-wider">INTERVAL (e)</span><span className="font-bold font-mono text-ink-950">{instrument.verification_interval_e} kg</span></div>
+        <div><span className="text-ink-400 block uppercase font-mono text-[9px] tracking-wider">ZERO ERROR (E₀)</span><span className="font-bold font-mono text-ink-950">{evaluation?.zero_error_e0 ?? '--'} kg</span></div>
+        <div><span className="text-ink-400 block uppercase font-mono text-[9px] tracking-wider">DRAFT STATUS</span><span className="font-bold font-mono text-ink-950">LOCAL SYNCED</span></div>
+        <div><span className="text-ink-400 block uppercase font-mono text-[9px] tracking-wider">LIFECYCLE</span><span className="font-bold font-mono text-ink-950">DRAFT PACKET</span></div>
       </div>
 
-      <div className="flex border-b border-slate-200 space-x-2 text-xs font-semibold overflow-x-auto">
+      {/* Step Tabs */}
+      <div className="flex border-b border-editorial-border space-x-2 text-xs font-mono font-bold uppercase tracking-wider overflow-x-auto">
         {[
-          { step: 1, label: 'Passport' },
-          { step: 2, label: 'Ambient' },
-          { step: 3, label: 'Worksheets' },
-          { step: 4, label: 'Summary' },
+          { step: 1, label: '1. PASSPORT' },
+          { step: 2, label: '2. AMBIENT' },
+          { step: 3, label: '3. WORKSHEETS' },
+          { step: 4, label: '4. SUMMARY' },
         ].map(({ step, label }) => (
           <button
             key={step}
             onClick={() => setWizardStep(step)}
-            className={`px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+            className={`px-5 py-3 transition-all whitespace-nowrap cursor-pointer ${
               wizardStep === step
-                ? 'border-blue-700 text-blue-800 font-bold bg-blue-50/50 rounded-t-lg'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-b-2 border-ink-950 text-ink-950 font-black bg-alabaster-100'
+                : 'text-ink-400 hover:text-ink-950'
             }`}
           >
             {label}
@@ -1396,28 +1403,29 @@ export default function EvaluationsPage() {
 
       {renderWizardStepContent()}
 
-      <div className="flex items-center justify-between gap-3 pt-2">
+      {/* Navigation Toolbar */}
+      <div className="flex items-center justify-between gap-4 pt-4 border-t border-editorial-border">
         <button
           type="button"
           onClick={() => setWizardStep((prev) => Math.max(prev - 1, 1))}
           disabled={wizardStep === 1}
-          className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 disabled:opacity-40"
+          className="px-5 py-2.5 border border-editorial-border bg-white text-xs font-mono font-bold uppercase tracking-wider text-ink-700 hover:bg-alabaster-100 disabled:opacity-40 transition-colors cursor-pointer"
         >
-          Previous
+          PREVIOUS STEP
         </button>
 
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Gauge className="w-4 h-4 text-blue-700" />
-          <span>Draft state persists locally and automatically recalculates zero-offset for each row update.</span>
+        <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-ink-500 uppercase">
+          <Gauge className="w-3.5 h-3.5 text-ink-900" />
+          <span>REAL-TIME MATHEMATICAL VALIDATION ACTIVE</span>
         </div>
 
         <button
           type="button"
           onClick={() => setWizardStep((prev) => Math.min(prev + 1, 4))}
           disabled={wizardStep === 4 || standardIsBlocked}
-          className="px-4 py-2 rounded-lg bg-blue-700 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-6 py-2.5 bg-ink-950 hover:bg-neutral-800 text-white text-xs font-mono font-bold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-editorial transition-colors cursor-pointer"
         >
-          {wizardStep === 4 ? 'Final Review' : 'Next'}
+          {wizardStep === 4 ? 'FINAL REVIEW' : 'NEXT STEP →'}
         </button>
       </div>
     </div>

@@ -123,36 +123,41 @@ export default function VerificationConsolePage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white p-6 border border-editorial-border shadow-editorial flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-            <FileCheck2 className="w-6 h-6 text-blue-800" />
-            <span>Two-Man Verification & Review Console</span>
-          </h1>
-          <p className="text-sm text-slate-500">
-            Authorized Legal Metrology Officer Audit & Cryptographic Seal Authorization Gateway
+          <div className="flex items-center gap-3">
+            <h1 className="font-display font-black text-2xl tracking-tight uppercase text-ink-950 flex items-center gap-2">
+              <FileCheck2 className="w-6 h-6 text-ink-950" />
+              <span>DUAL-CUSTODY AUDIT & VERIFICATION GATEWAY</span>
+            </h1>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-ink-950 text-white uppercase tracking-wider">
+              OFFICER DISPATCH
+            </span>
+          </div>
+          <p className="text-xs text-ink-500 font-mono mt-1 uppercase">
+            AUTHORIZED LEGAL METROLOGY OFFICER AUDIT • CRYPTOGRAPHIC SEAL ISSUANCE • TAMPER-PROOF ARCHIVE
           </p>
         </div>
       </div>
 
       {statusMessage && (
-        <div className={`p-4 rounded-xl border text-xs flex items-start gap-3 shadow-xs ${
+        <div className={`p-4 border text-xs font-mono flex items-start gap-3 shadow-editorial ${
           statusMessage.type === 'success'
-            ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-            : 'bg-rose-50 border-rose-300 text-rose-900'
+            ? 'bg-white border-emerald-300 text-emerald-950'
+            : 'bg-neutral-900 border-neutral-900 text-white'
         }`}>
           {statusMessage.type === 'success' ? (
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           ) : (
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0" />
           )}
           <div className="space-y-1">
-            <p className="font-bold">{statusMessage.text}</p>
+            <p className="font-bold uppercase tracking-wider">{statusMessage.text}</p>
             {statusMessage.hash && (
-              <p className="font-mono text-[11px] text-emerald-800 break-all">
-                SHA-256 Digital Digest: {statusMessage.hash}
+              <p className="text-[11px] text-ink-500 break-all">
+                DIGITAL SEAL DIGEST: {statusMessage.hash}
               </p>
             )}
           </div>
@@ -160,51 +165,51 @@ export default function VerificationConsolePage() {
       )}
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Report Queue & Filters */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
-          <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+        <div className="bg-white border border-editorial-border p-5 shadow-editorial space-y-4">
+          <div className="flex border border-editorial-border bg-alabaster-50 p-1 text-[11px] font-mono font-bold">
             <button
               type="button"
               onClick={() => setActiveFilter('PENDING')}
-              className={`flex-1 py-1.5 rounded-lg transition-all text-center cursor-pointer ${
-                activeFilter === 'PENDING' ? 'bg-white text-blue-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              className={`flex-1 py-2 uppercase tracking-wider transition-all text-center cursor-pointer ${
+                activeFilter === 'PENDING' ? 'bg-ink-950 text-white shadow-editorial' : 'text-ink-500 hover:text-ink-950'
               }`}
             >
-              Pending ({allReports.filter(r => r.status === 'PENDING_APPROVAL').length})
+              PENDING ({allReports.filter(r => r.status === 'PENDING_APPROVAL').length})
             </button>
             <button
               type="button"
               onClick={() => setActiveFilter('APPROVED')}
-              className={`flex-1 py-1.5 rounded-lg transition-all text-center cursor-pointer ${
-                activeFilter === 'APPROVED' ? 'bg-white text-blue-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              className={`flex-1 py-2 uppercase tracking-wider transition-all text-center cursor-pointer ${
+                activeFilter === 'APPROVED' ? 'bg-ink-950 text-white shadow-editorial' : 'text-ink-500 hover:text-ink-950'
               }`}
             >
-              Approved ({allReports.filter(r => r.status === 'APPROVED').length})
+              APPROVED ({allReports.filter(r => r.status === 'APPROVED').length})
             </button>
             <button
               type="button"
               onClick={() => setActiveFilter('ALL')}
-              className={`flex-1 py-1.5 rounded-lg transition-all text-center cursor-pointer ${
-                activeFilter === 'ALL' ? 'bg-white text-blue-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              className={`flex-1 py-2 uppercase tracking-wider transition-all text-center cursor-pointer ${
+                activeFilter === 'ALL' ? 'bg-ink-950 text-white shadow-editorial' : 'text-ink-500 hover:text-ink-950'
               }`}
             >
-              All ({allReports.length})
+              ALL ({allReports.length})
             </button>
           </div>
 
           {loadingList ? (
-            <div className="py-8 text-center text-xs text-slate-400">Loading audit queue...</div>
+            <div className="py-8 text-center text-xs font-mono text-ink-400 uppercase tracking-widest">LOADING AUDIT QUEUE...</div>
           ) : displayedReports.length === 0 ? (
-            <div className="py-12 px-4 text-center space-y-2">
-              <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto" />
-              <p className="text-xs font-bold text-slate-800">
-                {activeFilter === 'PENDING' ? 'Pending Queue is Clear' : 'No Reports Found'}
+            <div className="py-12 px-4 text-center space-y-2 border border-dashed border-editorial-border">
+              <ShieldCheck className="w-8 h-8 text-ink-950 mx-auto" />
+              <p className="text-xs font-mono font-bold uppercase tracking-wider text-ink-950">
+                {activeFilter === 'PENDING' ? 'PENDING QUEUE IS CLEAR' : 'NO RECORDS FOUND'}
               </p>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
+              <p className="text-[11px] font-mono text-ink-400 uppercase">
                 {activeFilter === 'PENDING' 
-                  ? 'No evaluation packets currently waiting for officer audit.' 
-                  : 'No reports match the selected view filter.'}
+                  ? 'NO EVALUATION PACKETS WAITING FOR OFFICER AUDIT.' 
+                  : 'NO REPORTS MATCH THE SELECTED FILTER.'}
               </p>
             </div>
           ) : (
@@ -221,28 +226,30 @@ export default function VerificationConsolePage() {
                       setSelectedReportId(item.id);
                       setStatusMessage(null);
                     }}
-                    className={`w-full text-left p-3 rounded-xl border text-xs transition-all cursor-pointer ${
+                    className={`w-full text-left p-3.5 border text-xs transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50/80 shadow-xs'
-                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        ? 'border-ink-950 bg-ink-950 text-white shadow-editorial'
+                        : 'border-editorial-border hover:border-ink-400 bg-white text-ink-900'
                     }`}
                   >
-                    <div className="flex items-center justify-between font-mono font-bold text-blue-900 mb-1">
-                      <span>{item.report_number}</span>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
-                        isPending 
-                          ? 'bg-amber-100 text-amber-800' 
+                    <div className="flex items-center justify-between font-mono font-bold mb-1">
+                      <span className={isSelected ? 'text-white' : 'text-ink-950'}>{item.report_number}</span>
+                      <span className={`text-[9px] px-1.5 py-0.5 uppercase tracking-wider font-bold ${
+                        isSelected
+                          ? 'bg-white text-ink-950'
+                          : isPending 
+                          ? 'bg-amber-100 text-amber-900' 
                           : isApproved 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : 'bg-slate-100 text-slate-700'
+                          ? 'bg-emerald-100 text-emerald-900' 
+                          : 'bg-neutral-100 text-neutral-800'
                       }`}>
                         {item.status}
                       </span>
                     </div>
-                    <div className="text-slate-800 font-semibold truncate text-[11px]">
+                    <div className={`font-semibold truncate text-[11px] ${isSelected ? 'text-neutral-200' : 'text-ink-800'}`}>
                       {item.instrument_model || 'Instrument'}
                     </div>
-                    <div className="text-slate-500 text-[10px] truncate mt-0.5">
+                    <div className={`text-[10px] font-mono truncate mt-0.5 ${isSelected ? 'text-neutral-400' : 'text-ink-500'}`}>
                       SN: {item.instrument_serial || 'N/A'} • {item.accuracy_class}
                     </div>
                   </button>
@@ -255,78 +262,78 @@ export default function VerificationConsolePage() {
         {/* Right Column: Selected Report Audit Card */}
         <div className="lg:col-span-2">
           {loadingDetail ? (
-            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400 text-xs">
-              Loading report details...
+            <div className="bg-white border border-editorial-border p-12 text-center text-ink-400 text-xs font-mono uppercase tracking-widest shadow-editorial">
+              RETRIEVING EVALUATION DOSSIER...
             </div>
           ) : reportDetail ? (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-2">
+            <div className="bg-white border border-editorial-border shadow-editorial p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-editorial-border pb-4 gap-2">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-base font-black text-blue-900">{reportDetail.report_number}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-base font-black text-ink-950">{reportDetail.report_number}</span>
+                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 uppercase tracking-wider ${
                       reportDetail.status === 'PENDING_APPROVAL'
-                        ? 'bg-amber-100 text-amber-800'
+                        ? 'bg-amber-100 text-amber-900 border border-amber-300'
                         : reportDetail.status === 'APPROVED'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-slate-100 text-slate-800'
+                        ? 'bg-ink-950 text-white'
+                        : 'bg-neutral-100 text-ink-900 border border-editorial-border'
                     }`}>
                       {reportDetail.status}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-600 block mt-1">
-                    {reportDetail.instrument?.model_name ?? 'Instrument'} • Serial: {reportDetail.instrument?.serial_number ?? 'N/A'} ({reportDetail.instrument?.accuracy_class ?? 'CLASS_III'})
+                  <span className="text-xs font-mono text-ink-500 block mt-1 uppercase">
+                    {reportDetail.instrument?.model_name ?? 'Instrument'} • SERIAL: {reportDetail.instrument?.serial_number ?? 'N/A'} ({reportDetail.instrument?.accuracy_class ?? 'CLASS_III'})
                   </span>
                 </div>
-                <div className="text-left sm:text-right text-xs text-slate-500">
-                  <div>Max: <span className="font-bold text-slate-800 font-mono">{reportDetail.instrument?.max_capacity ?? 15} {reportDetail.instrument?.unit ?? 'kg'}</span></div>
-                  <div>Standard: <span className="font-bold font-mono text-slate-800">{reportDetail.reference_standard?.set_identifier ?? 'N/A'}</span></div>
+                <div className="text-left sm:text-right text-xs font-mono text-ink-600">
+                  <div>MAX: <span className="font-bold text-ink-950">{reportDetail.instrument?.max_capacity ?? 15} {reportDetail.instrument?.unit ?? 'kg'}</span></div>
+                  <div>STANDARD: <span className="font-bold text-ink-950">{reportDetail.reference_standard?.set_identifier ?? 'N/A'}</span></div>
                 </div>
               </div>
 
               {/* Compliance Overview */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase block">Clause 3.5.1: Weighing</span>
-                  <span className="font-bold text-emerald-900 text-xs mt-1 block">PASS (Ec ≤ ±mpe)</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                <div className="bg-alabaster-50 border border-editorial-border p-3.5">
+                  <span className="text-[10px] font-bold text-ink-400 uppercase block">3.5.1: Weighing</span>
+                  <span className="font-bold text-ink-950 text-xs mt-1 block">PASS (Ec ≤ ±mpe)</span>
                 </div>
-                <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase block">Clause 3.6.1: Repeat</span>
-                  <span className="font-bold text-emerald-900 text-xs mt-1 block">PASS (ΔE ≤ mpe)</span>
+                <div className="bg-alabaster-50 border border-editorial-border p-3.5">
+                  <span className="text-[10px] font-bold text-ink-400 uppercase block">3.6.1: Repeat</span>
+                  <span className="font-bold text-ink-950 text-xs mt-1 block">PASS (ΔE ≤ mpe)</span>
                 </div>
-                <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase block">Clause 3.6.2: Eccentric</span>
-                  <span className="font-bold text-emerald-900 text-xs mt-1 block">PASS (4 Corners)</span>
+                <div className="bg-alabaster-50 border border-editorial-border p-3.5">
+                  <span className="text-[10px] font-bold text-ink-400 uppercase block">3.6.2: Eccentric</span>
+                  <span className="font-bold text-ink-950 text-xs mt-1 block">PASS (4 CORNERS)</span>
                 </div>
-                <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase block">Clause A.4.4: Tare/Zero</span>
-                  <span className="font-bold text-emerald-900 text-xs mt-1 block">PASS (E₀ ≤ 0.25e)</span>
+                <div className="bg-alabaster-50 border border-editorial-border p-3.5">
+                  <span className="text-[10px] font-bold text-ink-400 uppercase block">A.4.4: Tare/Zero</span>
+                  <span className="font-bold text-ink-950 text-xs mt-1 block">PASS (E₀ ≤ 0.25e)</span>
                 </div>
               </div>
 
               {/* Detail Review Link */}
-              <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 text-xs">
-                <span className="text-slate-600">Want to inspect full tolerance corridor curves & photographic evidence?</span>
+              <div className="flex items-center justify-between p-4 bg-alabaster-50 border border-editorial-border text-xs font-mono">
+                <span className="text-ink-600 uppercase">INSPECT FULL ERROR CORRIDOR CURVES & PHOTOGRAPHIC EVIDENCE</span>
                 <Link
                   href={`/evaluations/${reportDetail.id}/review`}
-                  className="text-blue-700 hover:text-blue-900 font-bold flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs"
+                  className="bg-ink-950 hover:bg-neutral-800 text-white font-bold px-4 py-2 uppercase tracking-wider text-[11px] flex items-center gap-1.5 transition-all shadow-editorial"
                 >
                   <Eye className="w-3.5 h-3.5" />
-                  <span>Open Deep Review Screen</span>
+                  <span>DEEP AUDIT DOSSIER</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
               {/* Status Info or Sign-off Box */}
               {reportDetail.status === 'APPROVED' ? (
-                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-900 font-bold text-xs">
+                <div className="p-5 bg-white border border-editorial-border shadow-editorial space-y-3 font-mono">
+                  <div className="flex items-center gap-2 text-ink-950 font-bold text-xs uppercase tracking-wider">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Type Approval Certificate Issued</span>
+                    <span>TYPE APPROVAL CERTIFICATE ISSUED</span>
                   </div>
                   {reportDetail.sha256_hash && (
-                    <p className="font-mono text-[11px] text-emerald-800 break-all">
-                      Integrity Seal: {reportDetail.sha256_hash}
+                    <p className="text-[11px] text-ink-500 break-all">
+                      INTEGRITY SEAL: {reportDetail.sha256_hash}
                     </p>
                   )}
                   <div className="pt-2 flex items-center gap-3">
@@ -334,89 +341,89 @@ export default function VerificationConsolePage() {
                       href={`http://localhost:8000/api/v1/documents/${reportDetail.id}/pdf`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+                      className="bg-ink-950 hover:bg-neutral-800 text-white px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-editorial"
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      <span>Download Official PDF</span>
+                      <span>DOWNLOAD OFFICIAL PDF</span>
                     </a>
                     <Link
                       href={`/verify/${reportDetail.id}`}
-                      className="text-emerald-800 hover:underline text-xs font-semibold"
+                      className="text-xs font-bold text-ink-950 uppercase tracking-wider underline hover:text-neutral-600"
                     >
-                      Public Verification Portal →
+                      PUBLIC VERIFICATION PORTAL →
                     </Link>
                   </div>
                 </div>
               ) : reportDetail.status === 'REJECTED' ? (
-                <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs space-y-1">
-                  <div className="flex items-center gap-2 text-rose-900 font-bold">
+                <div className="p-5 bg-white border border-rose-300 text-xs font-mono space-y-1">
+                  <div className="flex items-center gap-2 text-rose-900 font-bold uppercase tracking-wider">
                     <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                    <span>Report Rejected / Returned for Re-testing</span>
+                    <span>REPORT REJECTED / RETURNED FOR RE-TESTING</span>
                   </div>
                   {reportDetail.rejection_reason && (
-                    <p className="text-rose-700">Remarks: {reportDetail.rejection_reason}</p>
+                    <p className="text-rose-700 uppercase mt-1">Remarks: {reportDetail.rejection_reason}</p>
                   )}
                 </div>
               ) : (
                 /* Officer Authorization Sign-off Box for PENDING / DRAFT */
-                <div className="border-t border-slate-100 pt-5 space-y-4">
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <KeyRound className="w-3.5 h-3.5 text-blue-700" />
-                    <span>Approving Officer Authorization</span>
+                <div className="border-t border-editorial-border pt-6 space-y-4 font-mono">
+                  <h4 className="text-xs font-bold text-ink-950 uppercase tracking-wider flex items-center gap-2">
+                    <KeyRound className="w-3.5 h-3.5 text-ink-950" />
+                    <span>APPROVING OFFICER AUTHORIZATION</span>
                   </h4>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <label className="text-slate-600 block mb-1 font-medium">
-                        Digital Authorization PIN (Required for Approval)
+                      <label className="text-ink-500 block mb-1 uppercase font-bold text-[10px] tracking-wider">
+                        DIGITAL AUTHORIZATION PIN (REQUIRED FOR APPROVAL)
                       </label>
                       <input
                         type="password"
-                        placeholder="e.g. 1234"
+                        placeholder="••••"
                         value={pin}
                         onChange={(e) => setPin(e.target.value)}
-                        className="border border-slate-300 rounded-lg px-3 py-2 w-full font-mono outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-editorial-border bg-white px-3 py-2 w-full font-mono outline-none focus:border-ink-950"
                       />
                     </div>
                     <div>
-                      <label className="text-slate-600 block mb-1 font-medium">
-                        Audit Remarks (Mandatory if Rejecting)
+                      <label className="text-ink-500 block mb-1 uppercase font-bold text-[10px] tracking-wider">
+                        AUDIT REMARKS (MANDATORY IF REJECTING)
                       </label>
                       <input
                         type="text"
-                        placeholder="Audit findings or adjustment notes"
+                        placeholder="AUDIT FINDINGS OR ADJUSTMENT NOTES"
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
-                        className="border border-slate-300 rounded-lg px-3 py-2 w-full outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-editorial-border bg-white px-3 py-2 w-full font-mono outline-none focus:border-ink-950"
                       />
                     </div>
                   </div>
 
-                  <div className="flex justify-end items-center gap-3 pt-2">
+                  <div className="flex justify-end items-center gap-3 pt-3">
                     <button
                       type="button"
                       disabled={submittingAction}
                       onClick={() => handleAction('REJECT')}
-                      className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 rounded-lg text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
+                      className="px-4 py-2.5 bg-white hover:bg-rose-50 text-rose-800 border border-rose-300 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
                     >
-                      Reject / Return for Re-test
+                      REJECT / RETURN FOR RE-TEST
                     </button>
                     <button
                       type="button"
                       disabled={submittingAction}
                       onClick={() => handleAction('APPROVE')}
-                      className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="px-6 py-2.5 bg-ink-950 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider shadow-editorial transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       <ShieldCheck className="w-4 h-4" />
-                      <span>Approve & Issue Certificate</span>
+                      <span>APPROVE & ISSUE SEAL</span>
                     </button>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400 text-xs">
-              Select a test report from the left queue to view or conduct the audit.
+            <div className="bg-white border border-editorial-border p-12 text-center text-ink-400 text-xs font-mono uppercase tracking-widest shadow-editorial">
+              SELECT AN EVALUATION PACKET FROM THE QUEUE TO COMMENCE OFFICER AUDIT.
             </div>
           )}
         </div>

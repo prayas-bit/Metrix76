@@ -11,10 +11,10 @@ import {
   X, 
   Save, 
   Layers, 
-  Sparkles,
-  Building,
-  Tag,
-  Hash
+  Sparkles, 
+  Building, 
+  Tag, 
+  Hash 
 } from 'lucide-react';
 import { listInstruments, validateInstrumentSanity, createInstrument } from '@/lib/api';
 import { Instrument, InstrumentMeta, SanityCheckResult, AccuracyClass } from '@/types/metrology';
@@ -142,56 +142,60 @@ export default function InstrumentsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 border border-editorial-border shadow-editorial">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-            <Scale className="w-6 h-6 text-blue-800" />
-            <span>Instrument Passports & Metadata Engine</span>
-          </h1>
-          <p className="text-sm text-slate-500">
-            Structural parameter capture with automated OIML scale interval sanity verification.
+          <div className="flex items-center gap-3">
+            <h1 className="font-display font-black text-2xl tracking-tight uppercase text-ink-950">
+              INSTRUMENT PASSPORTS
+            </h1>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-ink-950 text-white uppercase tracking-wider">
+              OIML R 76-1 CLAUSE 3
+            </span>
+          </div>
+          <p className="text-xs text-ink-500 font-mono mt-1">
+            STRUCTURAL METROLOGICAL METADATA • AUTOMATED INTERVAL SANITY (e ≥ d, n = Max/e)
           </p>
         </div>
         <button
           type="button"
           onClick={() => setShowModal(true)}
-          className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
+          className="bg-ink-950 hover:bg-neutral-800 text-white px-5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-editorial cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>New Instrument Passport</span>
+          <span>NEW INSTRUMENT PASSPORT</span>
         </button>
       </div>
 
       {successToast && (
-        <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-semibold text-emerald-900 flex items-center gap-2 animate-in fade-in">
+        <div className="border border-emerald-300 bg-white p-4 text-xs font-mono font-bold text-emerald-800 flex items-center gap-2 shadow-editorial">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <span>{successToast}</span>
         </div>
       )}
 
       {error && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <strong>Instrument data unavailable:</strong> {error}
+        <div className="border border-neutral-900 bg-neutral-900 text-white p-4 text-xs font-mono">
+          <strong>SYSTEM NOTICE:</strong> {error}
         </div>
       )}
 
-      {/* Sanity Engine Live Checker Sandbox */}
-      <div className="bg-slate-900 text-white rounded-xl p-6 shadow-md space-y-4">
-        <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+      {/* Sanity Engine Live Checker Sandbox (Jet Black Contrast Strip) */}
+      <div className="bg-[#0A0A0A] text-white p-6 sm:p-8 border border-neutral-800 shadow-editorial space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-800 pb-4">
           <div>
-            <h3 className="text-sm font-bold tracking-tight text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Automated Structural Sanity Verification Engine (Sandbox)</span>
+            <h3 className="font-display font-bold text-base tracking-tight uppercase text-white flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-white" />
+              <span>STRUCTURAL SANITY VERIFICATION ENGINE (SANDBOX)</span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-[11px] font-mono text-neutral-400 mt-0.5">
               Validates interval ratios (e ≥ d), total scale intervals (n = Max/e), and statutory limits.
             </p>
           </div>
           {sandboxSanity && (
-            <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase ${
-              sandboxSanity.is_valid ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+            <span className={`px-3 py-1 text-[10px] font-mono font-bold tracking-widest uppercase border self-start sm:self-auto ${
+              sandboxSanity.is_valid ? 'bg-white text-ink-950 border-white' : 'bg-neutral-900 text-rose-400 border-neutral-700'
             }`}>
               {sandboxSanity.is_valid ? 'SANITY PASSED' : 'SANITY VIOLATION'}
             </span>
@@ -200,11 +204,13 @@ export default function InstrumentsPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs">
           <div>
-            <label className="text-slate-400 block mb-1">Accuracy Class</label>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1.5">
+              ACCURACY CLASS
+            </label>
             <select
               value={sandboxSpec.accuracy_class}
               onChange={(e) => setSandboxSpec({ ...sandboxSpec, accuracy_class: e.target.value as AccuracyClass })}
-              className="bg-slate-800 border border-slate-700 rounded px-2.5 py-1.5 w-full text-white font-mono outline-none"
+              className="bg-neutral-900 border border-neutral-800 px-3 py-2 w-full text-white font-mono text-xs outline-none focus:border-neutral-500"
             >
               <option value="CLASS_I">Class I (Special)</option>
               <option value="CLASS_II">Class II (High)</option>
@@ -213,53 +219,61 @@ export default function InstrumentsPage() {
             </select>
           </div>
           <div>
-            <label className="text-slate-400 block mb-1">Max Capacity [{sandboxSpec.unit}]</label>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1.5">
+              MAX CAPACITY [{sandboxSpec.unit}]
+            </label>
             <input
               type="number"
               step="any"
               value={sandboxSpec.max_capacity}
               onChange={(e) => setSandboxSpec({ ...sandboxSpec, max_capacity: parseFloat(e.target.value) || 0 })}
-              className="bg-slate-800 border border-slate-700 rounded px-2.5 py-1.5 w-full text-white font-mono outline-none"
+              className="bg-neutral-900 border border-neutral-800 px-3 py-2 w-full text-white font-mono text-xs outline-none focus:border-neutral-500"
             />
           </div>
           <div>
-            <label className="text-slate-400 block mb-1">Min Capacity [{sandboxSpec.unit}]</label>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1.5">
+              MIN CAPACITY [{sandboxSpec.unit}]
+            </label>
             <input
               type="number"
               step="any"
               value={sandboxSpec.min_capacity}
               onChange={(e) => setSandboxSpec({ ...sandboxSpec, min_capacity: parseFloat(e.target.value) || 0 })}
-              className="bg-slate-800 border border-slate-700 rounded px-2.5 py-1.5 w-full text-white font-mono outline-none"
+              className="bg-neutral-900 border border-neutral-800 px-3 py-2 w-full text-white font-mono text-xs outline-none focus:border-neutral-500"
             />
           </div>
           <div>
-            <label className="text-slate-400 block mb-1">Interval e [{sandboxSpec.unit}]</label>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1.5">
+              INTERVAL e [{sandboxSpec.unit}]
+            </label>
             <input
               type="number"
               step="any"
               value={sandboxSpec.verification_interval_e}
               onChange={(e) => setSandboxSpec({ ...sandboxSpec, verification_interval_e: parseFloat(e.target.value) || 0 })}
-              className="bg-slate-800 border border-slate-700 rounded px-2.5 py-1.5 w-full text-white font-mono outline-none"
+              className="bg-neutral-900 border border-neutral-800 px-3 py-2 w-full text-white font-mono text-xs outline-none focus:border-neutral-500"
             />
           </div>
           <div>
-            <label className="text-slate-400 block mb-1">Interval d [{sandboxSpec.unit}]</label>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1.5">
+              INTERVAL d [{sandboxSpec.unit}]
+            </label>
             <input
               type="number"
               step="any"
               value={sandboxSpec.scale_interval_d}
               onChange={(e) => setSandboxSpec({ ...sandboxSpec, scale_interval_d: parseFloat(e.target.value) || 0 })}
-              className="bg-slate-800 border border-slate-700 rounded px-2.5 py-1.5 w-full text-white font-mono outline-none"
+              className="bg-neutral-900 border border-neutral-800 px-3 py-2 w-full text-white font-mono text-xs outline-none focus:border-neutral-500"
             />
           </div>
         </div>
 
         {sandboxSanity && !sandboxSanity.is_valid && (
-          <div className="bg-rose-950/60 border border-rose-800 text-rose-200 rounded-lg p-3 text-xs space-y-1">
-            <div className="font-bold flex items-center gap-1.5">
-              <AlertOctagon className="w-4 h-4 text-rose-400" /> Statutory Parameter Non-Compliance:
+          <div className="bg-neutral-950 border border-neutral-800 p-4 text-xs font-mono space-y-1">
+            <div className="font-bold flex items-center gap-1.5 text-rose-400">
+              <AlertOctagon className="w-4 h-4" /> STATUTORY PARAMETER NON-COMPLIANCE:
             </div>
-            <ul className="list-disc list-inside space-y-0.5 text-rose-300">
+            <ul className="list-disc list-inside space-y-0.5 text-neutral-300 text-[11px] mt-1">
               {sandboxSanity.issues.map((err, i) => (
                 <li key={i}>{err}</li>
               ))}
@@ -269,51 +283,51 @@ export default function InstrumentsPage() {
       </div>
 
       {/* Registered Instruments Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <span className="font-bold text-xs text-slate-700 uppercase tracking-wider">
-            Registered Physical Instruments ({instruments.length})
+      <div className="bg-white border border-editorial-border shadow-editorial overflow-hidden">
+        <div className="p-4 border-b border-editorial-border flex items-center justify-between bg-alabaster-50">
+          <span className="font-mono font-bold text-xs text-ink-900 uppercase tracking-widest">
+            REGISTERED PHYSICAL INSTRUMENTS ({instruments.length})
           </span>
-          {loadingList && <span className="text-xs text-slate-400">Refreshing...</span>}
+          {loadingList && <span className="text-xs font-mono text-ink-400">REFRESHING...</span>}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-slate-100 border-b border-slate-200 text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
+            <thead className="bg-alabaster-100 border-b border-editorial-border text-ink-900 font-mono font-bold uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="p-3.5">Serial Number</th>
-                <th className="p-3.5">Model / Make</th>
-                <th className="p-3.5">Manufacturer</th>
-                <th className="p-3.5">Accuracy Class</th>
-                <th className="p-3.5">Max / Min Capacity</th>
-                <th className="p-3.5">Intervals (e / d)</th>
-                <th className="p-3.5">Scale Intervals (n)</th>
+                <th className="p-4">SERIAL NUMBER</th>
+                <th className="p-4">MODEL / MAKE</th>
+                <th className="p-4">MANUFACTURER</th>
+                <th className="p-4">ACCURACY CLASS</th>
+                <th className="p-4">CAPACITY (MAX / MIN)</th>
+                <th className="p-4">INTERVALS (e / d)</th>
+                <th className="p-4">DIVISIONS (n)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-editorial-border">
               {instruments.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-400">
-                    No instruments registered yet. Click &quot;New Instrument Passport&quot; to create one.
+                  <td colSpan={7} className="p-10 text-center font-mono text-xs text-ink-400">
+                    No instruments registered yet. Click &quot;NEW INSTRUMENT PASSPORT&quot; to create one.
                   </td>
                 </tr>
               ) : (
                 instruments.map((inst) => (
-                  <tr key={inst.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="p-3.5 font-bold font-mono text-blue-900">{inst.serial_number}</td>
-                    <td className="p-3.5 font-medium text-slate-800">{inst.model_name}</td>
-                    <td className="p-3.5 text-slate-600">{inst.manufacturer_name}</td>
-                    <td className="p-3.5">
-                      <span className="px-2 py-0.5 rounded font-mono font-bold bg-blue-50 text-blue-800">
+                  <tr key={inst.id} className="hover:bg-alabaster-50 transition-colors">
+                    <td className="p-4 font-bold font-mono text-ink-950">{inst.serial_number}</td>
+                    <td className="p-4 font-bold text-ink-900">{inst.model_name}</td>
+                    <td className="p-4 text-ink-700">{inst.manufacturer_name}</td>
+                    <td className="p-4">
+                      <span className="px-2 py-0.5 font-mono text-[9px] font-bold bg-ink-950 text-white uppercase">
                         {inst.accuracy_class}
                       </span>
                     </td>
-                    <td className="p-3.5 font-mono text-slate-700">
+                    <td className="p-4 font-mono text-ink-800">
                       {inst.max_capacity} {inst.unit} / {inst.min_capacity} {inst.unit}
                     </td>
-                    <td className="p-3.5 font-mono text-slate-700">
-                      e = {inst.verification_interval_e} / d = {inst.scale_interval_d}
+                    <td className="p-4 font-mono text-ink-800">
+                      e={inst.verification_interval_e} / d={inst.scale_interval_d}
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-slate-900">
+                    <td className="p-4 font-mono font-bold text-ink-950">
                       {inst.calculated_n ? inst.calculated_n.toLocaleString() : (inst.max_capacity / inst.verification_interval_e).toLocaleString()}
                     </td>
                   </tr>
@@ -326,44 +340,39 @@ export default function InstrumentsPage() {
 
       {/* Modal Dialog: New Instrument Passport */}
       {showModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+        <div className="fixed inset-0 bg-ink-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
+          <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-editorialLg border border-editorial-border">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-blue-50 text-blue-800 rounded-xl">
-                  <Scale className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-base font-extrabold text-slate-900">
-                    Register New Instrument Passport
-                  </h2>
-                  <p className="text-xs text-slate-500">
-                    Capture structural metadata conforming to OIML R 76-1 Clause 3.1–3.4
-                  </p>
-                </div>
+            <div className="flex items-center justify-between p-6 border-b border-editorial-border bg-alabaster-50">
+              <div>
+                <h2 className="font-display font-bold text-lg text-ink-950 uppercase">
+                  REGISTER INSTRUMENT PASSPORT
+                </h2>
+                <p className="text-[10px] font-mono text-ink-500 uppercase tracking-wider mt-0.5">
+                  STRUCTURAL METADATA CONFORMING TO OIML R 76-1 CLAUSE 3.1–3.4
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
+                className="p-1 text-ink-400 hover:text-ink-950 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleCreateInstrument} className="p-6 space-y-5">
+            <form onSubmit={handleCreateInstrument} className="p-6 space-y-6">
               {/* Identification Section */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-mono font-bold text-ink-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-editorial-border pb-2">
                   <Tag className="w-3.5 h-3.5" />
-                  <span>1. Identity & Manufacturer Details</span>
+                  <span>1. IDENTITY & MANUFACTURER DETAILS</span>
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Serial Number *
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      SERIAL NUMBER *
                     </label>
                     <input
                       type="text"
@@ -371,12 +380,12 @@ export default function InstrumentsPage() {
                       value={formState.serial_number}
                       onChange={(e) => setFormState({ ...formState, serial_number: e.target.value })}
                       placeholder="e.g. SN-PB-2026-0042"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Model / Brand Name *
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      MODEL / BRAND NAME *
                     </label>
                     <input
                       type="text"
@@ -384,12 +393,12 @@ export default function InstrumentsPage() {
                       value={formState.model_name}
                       onChange={(e) => setFormState({ ...formState, model_name: e.target.value })}
                       placeholder="e.g. PrecisionScale Pro-15"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Manufacturer Name *
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      MANUFACTURER NAME *
                     </label>
                     <input
                       type="text"
@@ -397,27 +406,27 @@ export default function InstrumentsPage() {
                       value={formState.manufacturer_name}
                       onChange={(e) => setFormState({ ...formState, manufacturer_name: e.target.value })}
                       placeholder="e.g. Mettler Toledo India"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Metrological Parameters Section */}
-              <div className="space-y-3 pt-3 border-t border-slate-100">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <div className="space-y-4 pt-2">
+                <h3 className="text-[10px] font-mono font-bold text-ink-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-editorial-border pb-2">
                   <Hash className="w-3.5 h-3.5" />
-                  <span>2. Metrological Specification & Scale Intervals</span>
+                  <span>2. METROLOGICAL SPECIFICATION & INTERVALS</span>
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Accuracy Class
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      ACCURACY CLASS
                     </label>
                     <select
                       value={formState.accuracy_class}
                       onChange={(e) => setFormState({ ...formState, accuracy_class: e.target.value as AccuracyClass })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     >
                       <option value="CLASS_I">Class I (Special)</option>
                       <option value="CLASS_II">Class II (High)</option>
@@ -427,13 +436,13 @@ export default function InstrumentsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Units of Mass
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      UNITS OF MASS
                     </label>
                     <select
                       value={formState.unit}
                       onChange={(e) => setFormState({ ...formState, unit: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     >
                       <option value="kg">Kilograms (kg)</option>
                       <option value="g">Grams (g)</option>
@@ -442,8 +451,8 @@ export default function InstrumentsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Max Capacity (Max)
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      MAX CAPACITY (Max)
                     </label>
                     <input
                       type="number"
@@ -451,13 +460,13 @@ export default function InstrumentsPage() {
                       required
                       value={formState.max_capacity}
                       onChange={(e) => setFormState({ ...formState, max_capacity: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Min Capacity (Min)
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      MIN CAPACITY (Min)
                     </label>
                     <input
                       type="number"
@@ -465,13 +474,13 @@ export default function InstrumentsPage() {
                       required
                       value={formState.min_capacity}
                       onChange={(e) => setFormState({ ...formState, min_capacity: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Verification Interval (e)
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      VERIFICATION INTERVAL (e)
                     </label>
                     <input
                       type="number"
@@ -479,13 +488,13 @@ export default function InstrumentsPage() {
                       required
                       value={formState.verification_interval_e}
                       onChange={(e) => setFormState({ ...formState, verification_interval_e: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Actual Interval (d)
+                    <label className="block text-[10px] font-mono font-bold text-ink-600 uppercase tracking-widest mb-1.5">
+                      ACTUAL INTERVAL (d)
                     </label>
                     <input
                       type="number"
@@ -493,7 +502,7 @@ export default function InstrumentsPage() {
                       required
                       value={formState.scale_interval_d}
                       onChange={(e) => setFormState({ ...formState, scale_interval_d: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-alabaster-50 border border-editorial-border text-xs font-mono text-ink-950 outline-none focus:border-ink-950"
                     />
                   </div>
                 </div>
@@ -501,22 +510,22 @@ export default function InstrumentsPage() {
 
               {/* Sanity Engine Status in Modal */}
               {formSanity && (
-                <div className={`p-3.5 rounded-xl border text-xs ${
+                <div className={`p-4 border text-xs font-mono ${
                   formSanity.is_valid
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                    : 'bg-rose-50 border-rose-200 text-rose-900'
+                    ? 'bg-alabaster-50 border-editorial-border text-ink-900'
+                    : 'bg-white border-rose-400 text-rose-900'
                 }`}>
-                  <div className="flex items-center justify-between font-bold mb-1">
-                    <span className="flex items-center gap-1.5">
+                  <div className="flex items-center justify-between font-bold">
+                    <span className="flex items-center gap-1.5 uppercase">
                       {formSanity.is_valid ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertOctagon className="w-4 h-4 text-rose-600" />}
                       <span>{formSanity.is_valid ? 'OIML R 76 Sanity Check Passed' : 'OIML Sanity Check Failed'}</span>
                     </span>
-                    <span className="font-mono text-[11px]">
+                    <span className="text-[10px]">
                       n = {(formState.max_capacity / (formState.verification_interval_e || 1)).toLocaleString()} intervals
                     </span>
                   </div>
                   {!formSanity.is_valid && (
-                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-rose-700 mt-1">
+                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-rose-700 mt-2">
                       {formSanity.issues.map((issue, idx) => (
                         <li key={idx}>{issue}</li>
                       ))}
@@ -526,21 +535,21 @@ export default function InstrumentsPage() {
               )}
 
               {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-editorial-border">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 border border-editorial-border text-xs font-mono uppercase tracking-wider text-ink-700 hover:bg-alabaster-100 transition-colors cursor-pointer"
                 >
-                  Cancel
+                  CANCEL
                 </button>
                 <button
                   type="submit"
                   disabled={submitting || (formSanity ? !formSanity.is_valid : false)}
-                  className="bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
+                  className="bg-ink-950 hover:bg-neutral-800 disabled:opacity-50 text-white px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-editorial transition-colors cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{submitting ? 'Registering Passport...' : 'Save & Register Passport'}</span>
+                  <span>{submitting ? 'REGISTERING...' : 'SAVE & REGISTER PASSPORT'}</span>
                 </button>
               </div>
             </form>
