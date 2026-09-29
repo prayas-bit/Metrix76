@@ -164,9 +164,8 @@ export default function LifecycleDrawer({
                   <div key={att.attemptNumber} className="relative group">
                     {/* Timeline Node Dot */}
                     <div
-                      className={`absolute -left-[33px] top-1.5 w-4 h-4 rounded-full border-2 border-white shadow-xs ${
-                        isPass ? 'bg-emerald-500 ring-4 ring-emerald-100' : 'bg-rose-500 ring-4 ring-rose-100'
-                      }`}
+                      className={`absolute -left-[33px] top-1.5 w-4 h-4 rounded-full border-2 border-white shadow-xs ${isPass ? 'bg-emerald-500 ring-4 ring-emerald-100' : 'bg-rose-500 ring-4 ring-rose-100'
+                        }`}
                     />
 
                     {/* Attempt Card */}
@@ -181,11 +180,10 @@ export default function LifecycleDrawer({
                           </span>
                         </div>
                         <span
-                          className={`px-2 py-0.5 text-[10px] font-black uppercase rounded-full border ${
-                            isPass
+                          className={`px-2 py-0.5 text-[10px] font-black uppercase rounded-full border ${isPass
                               ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
                               : 'bg-rose-100 text-rose-800 border-rose-200'
-                          }`}
+                            }`}
                         >
                           {att.status}
                         </span>
@@ -206,9 +204,8 @@ export default function LifecycleDrawer({
                             Critical Margin Ratio
                           </span>
                           <span
-                            className={`font-mono font-bold ${
-                              att.criticalMarginRatio > 100 ? 'text-rose-600' : 'text-emerald-600'
-                            }`}
+                            className={`font-mono font-bold ${att.criticalMarginRatio > 100 ? 'text-rose-600' : 'text-emerald-600'
+                              }`}
                           >
                             {att.criticalMarginRatio}%
                           </span>
