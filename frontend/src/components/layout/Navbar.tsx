@@ -7,23 +7,42 @@ import {
   LayoutDashboard, 
   Scale, 
   FileCheck2, 
-  ShieldAlert, 
   Archive, 
-  Award,
+  Award, 
   Layers
 } from 'lucide-react';
+import UserSessionSwitcher from './UserSessionSwitcher';
+import { useAuth, UserRole } from '@/lib/authContext';
 
-const NAV_ITEMS = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, tag: 'M1' },
-  { name: 'Standards & Traceability', href: '/standards', icon: Award, tag: 'M2' },
-  { name: 'Instrument Passports', href: '/instruments', icon: Scale, tag: 'M3' },
-  { name: 'Live Evaluation', href: '/evaluations', icon: Layers, tag: 'M4' },
-  { name: 'Verification Console', href: '/verification', icon: FileCheck2, tag: 'M5' },
-  { name: 'Archive & Lifecycle', href: '/archive', icon: Archive, tag: 'M6' },
+interface NavItem {
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  tag: string;
+  allowedRoles: (UserRole | null)[];
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard, tag: 'M1', allowedRoles: ['TECHNICIAN', 'APPROVER', 'ADMIN', null] },
+  { name: 'Standards & Traceability', href: '/standards', icon: Award, tag: 'M2', allowedRoles: ['TECHNICIAN', 'APPROVER', 'ADMIN', null] },
+  { name: 'Instrument Passports', href: '/instruments', icon: Scale, tag: 'M3', allowedRoles: ['TECHNICIAN', 'ADMIN'] },
+  { name: 'Live Evaluation', href: '/evaluations', icon: Layers, tag: 'M4', allowedRoles: ['TECHNICIAN', 'ADMIN'] },
+  { name: 'Verification Console', href: '/verification', icon: FileCheck2, tag: 'M5', allowedRoles: ['APPROVER', 'ADMIN'] },
+  { name: 'Archive & Lifecycle', href: '/archive', icon: Archive, tag: 'M6', allowedRoles: ['TECHNICIAN', 'APPROVER', 'ADMIN', null] },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { role, user } = useAuth();
+
+  // Role-based filtering of navigation items
+  const visibleNavItems = NAV_ITEMS.filter((item) => {
+    if (!user) {
+      return item.allowedRoles.includes(null);
+    }
+    const currentRole = role || 'TECHNICIAN';
+    return item.allowedRoles.includes(currentRole);
+  });
 
   return (
     <header className="border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
@@ -46,7 +65,7 @@ export default function Navbar() {
           </div>
 
           <nav className="hidden md:flex space-x-1 lg:space-x-2">
-            {NAV_ITEMS.map((item) => {
+            {visibleNavItems.map((item) => {
               const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
               const Icon = item.icon;
               return (
@@ -67,10 +86,7 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-slate-600 font-medium">Testing Metrologist</span>
-            </div>
+            <UserSessionSwitcher />
           </div>
         </div>
       </div>
