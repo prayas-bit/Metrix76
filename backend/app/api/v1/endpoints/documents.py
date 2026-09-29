@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 import io
+import os
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 from app.services.reporting import OIMLPDFGenerator, OIMLDOCXGenerator, OIMLErrorChartEngine
