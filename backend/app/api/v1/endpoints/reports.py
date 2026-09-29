@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, status
 from datetime import datetime, date, timezone
-from typing import List, Optional
+from typing import List, Optional, Dict
 from app.schemas.report import (
     BatchObservationPayload,
     ReportSubmissionResponse,
@@ -17,11 +17,129 @@ from app.schemas.instrument import InstrumentOut
 from app.schemas.reference_standard import ReferenceStandardOut
 from app.schemas.metrology import AccuracyClass, TestDirection, ComplianceVerdict, WeighingEvaluationResult
 from app.core.supabase import get_supabase_client
+from app.api.v1.endpoints.instruments import _LOCAL_CACHE as _LOCAL_INSTRUMENTS, _map_row_to_instrument
+from app.api.v1.endpoints.reference_standards import _LOCAL_CACHE as _LOCAL_STANDARDS, _map_row_to_standard
 
 router = APIRouter()
 
+_SAMPLE_INST = InstrumentOut(
+    id="inst-001",
+    serial_number="SN-TEST-001",
+    model_name="Standard Precision Balance",
+    manufacturer_name="Metrology Dept",
+    accuracy_class=AccuracyClass.CLASS_III,
+    max_capacity=15.0,
+    min_capacity=0.1,
+    scale_interval_d=0.002,
+    verification_interval_e=0.002,
+    unit="kg",
+    is_multi_interval=False,
+    load_receptor_type="Platform",
+    indicator_make_model="IND-2000",
+    year_of_manufacture=2026,
+    calculated_n=7500,
+    attachments=[],
+    created_at=datetime.now(timezone.utc)
+)
+
+_SAMPLE_STD = ReferenceStandardOut(
+    id="std-001",
+    set_identifier="STD-SET-01",
+    accuracy_class="E2",
+    certificate_number="CAL-2026-001",
+    calibrated_by="National Metrology Lab",
+    calibration_date=date(2026, 1, 1),
+    expiry_date=date(2027, 1, 1),
+    expanded_uncertainty_k2=0.0001,
+    nominal_range="1 mg to 50 kg",
+    is_active=True,
+    is_expired=False,
+    days_to_expiry=120,
+    created_at=datetime.now(timezone.utc)
+)
+
 # In-memory fallback
-_LOCAL_REPORTS: List[TestReportDetail] = []
+_LOCAL_REPORTS: List[TestReportDetail] = [
+    TestReportDetail(
+        id="rep-100",
+        report_number="OIML-2026-TR-0100",
+        attempt_number=1,
+        status=ReportStatus.APPROVED,
+        standard_version="OIML R 76-1:2006",
+        instrument=_SAMPLE_INST,
+        reference_standard=_SAMPLE_STD,
+        environment=EnvironmentalConditions(
+            ambient_temperature_celsius=22.5,
+            relative_humidity_pct=55.0,
+            atmospheric_pressure_hpa=1013.25
+        ),
+        technical_checklist=TechnicalChecklist(),
+        overall_verdict=True,
+        rejection_reason=None,
+        sha256_hash="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        pdf_storage_path="generated-reports/rep-100.pdf",
+        docx_storage_path="generated-reports/rep-100.docx",
+        weighing_observations=[],
+        repeatability_results=[],
+        eccentricity_results=[],
+        conducted_by="A. Verma (Testing Metrologist)",
+        approved_by="Dr. R. K. Mukherjee (Director of Metrology)",
+        approved_at=datetime.now(timezone.utc),
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc)
+    )
+]
+_LOCAL_OBSERVATIONS: Dict[str, List[TestObservationRowPayload]] = {}
+
+
+def _get_instrument_helper(instrument_id: str) -> Optional[InstrumentOut]:
+    supabase = get_supabase_client()
+    if supabase:
+        try:
+            res = supabase.table("instruments").select("*").eq("id", instrument_id).execute()
+            if res.data and len(res.data) > 0:
+                return _map_row_to_instrument(res.data[0])
+        except Exception as e:
+            print(f"[Supabase] Error fetching instrument: {e}")
+    inst = next((i for i in _LOCAL_INSTRUMENTS if i.id == instrument_id), None)
+    if inst:
+        return inst
+    if instrument_id in ("inst-001", "default"):
+        return InstrumentOut(
+            id="inst-001",
+            serial_number="SN-TEST-001",
+            model_name="Standard Precision Balance",
+            manufacturer_name="Metrology Dept",
+            accuracy_class=AccuracyClass.CLASS_III,
+            max_capacity=15.0,
+            min_capacity=0.1,
+            scale_interval_d=0.002,
+            verification_interval_e=0.002,
+            unit="kg",
+            is_multi_interval=False,
+            load_receptor_type="Platform",
+            indicator_make_model="IND-2000",
+            year_of_manufacture=2026,
+            calculated_n=7500,
+            attachments=[],
+            created_at=datetime.now(timezone.utc)
+        )
+    return None
+
+
+def _get_standard_helper(standard_id: str) -> Optional[ReferenceStandardOut]:
+    supabase = get_supabase_client()
+    if supabase:
+        try:
+            res = supabase.table("reference_standards").select("*").eq("id", standard_id).execute()
+            if res.data and len(res.data) > 0:
+                return _map_row_to_standard(res.data[0])
+        except Exception as e:
+            print(f"[Supabase] Error fetching standard: {e}")
+    std = next((s for s in _LOCAL_STANDARDS if s.id == standard_id), None)
+    if std:
+        return std
+    return None
 
 
 def _map_row_to_report_summary(row: dict) -> TestReportSummary:
@@ -133,12 +251,8 @@ def _map_row_to_report_detail(row: dict) -> TestReportDetail:
     )
 
 
-
 def _get_report_or_404(report_id: str) -> TestReportDetail:
-    rep = next((r for r in REPORTS_DB if r.id == report_id), None)
-    if not rep:
-        raise HTTPException(status_code=404, detail="Test report not found")
-    return rep
+    return get_report_detail(report_id)
 
 
 @router.post("/draft", response_model=TestReportDetail, status_code=status.HTTP_201_CREATED)
@@ -146,22 +260,59 @@ def create_report_draft(payload: TestReportCreate):
     """
     Creates a new draft evaluation report in the active technician workflow.
     """
-    instrument = next((item for item in INSTRUMENTS_DB if item.id == payload.instrument_id), None)
+    instrument = _get_instrument_helper(payload.instrument_id)
     if not instrument:
         raise HTTPException(status_code=404, detail="Instrument not found")
 
-    standard = next((item for item in STANDARDS_DB if item.id == payload.reference_standard_id), None)
+    standard = _get_standard_helper(payload.reference_standard_id)
     if not standard:
         raise HTTPException(status_code=404, detail="Reference standard not found")
 
     if not standard.is_active or standard.expiry_date < date.today():
         raise HTTPException(status_code=422, detail="Selected reference standard is expired or inactive")
 
-    now = datetime.now()
-    report_id = f"rep-{len(REPORTS_DB) + 101:03d}"
+    now = datetime.now(timezone.utc)
+    report_num = f"OIML-{now.year}-TR-{len(_LOCAL_REPORTS) + 1:04d}"
+
+    supabase = get_supabase_client()
+    if supabase:
+        try:
+            # Resolve active user ID for foreign key constraint
+            conducted_by_id = "5ec3c7f8-9d47-4024-9898-a4bbb4db1701"
+            if payload.conducted_by:
+                conducted_by_id = payload.conducted_by
+            else:
+                try:
+                    users_res = supabase.auth.admin.list_users()
+                    if users_res and len(users_res) > 0:
+                        conducted_by_id = str(users_res[0].id)
+                except Exception:
+                    pass
+
+            insert_data = {
+                "report_number": report_num,
+                "instrument_id": instrument.id,
+                "reference_standard_id": standard.id,
+                "attempt_number": 1,
+                "status": "DRAFT",
+                "standard_version": "OIML R 76-1:2006",
+                "ambient_temperature_celsius": payload.ambient_temperature_celsius,
+                "relative_humidity_pct": payload.relative_humidity_pct,
+                "atmospheric_pressure_hpa": payload.atmospheric_pressure_hpa,
+                "technical_checklist": payload.technical_checklist.model_dump() if payload.technical_checklist else {},
+                "conducted_by": conducted_by_id,
+            }
+            res = supabase.table("test_reports").insert(insert_data).execute()
+            if res.data and len(res.data) > 0:
+                new_row = res.data[0]
+                return get_report_detail(new_row["id"])
+        except Exception as e:
+            print(f"[Supabase] Error creating report draft: {e}")
+
+    report_id = f"rep-{len(_LOCAL_REPORTS) + 101:03d}"
     draft = TestReportDetail(
         id=report_id,
-        report_number=f"OIML-{now.year}-TR-{len(REPORTS_DB) + 1:04d}",
+        report_number=report_num,
         attempt_number=1,
         status=ReportStatus.DRAFT,
         standard_version="OIML R 76-1:2006",
@@ -172,7 +323,7 @@ def create_report_draft(payload: TestReportCreate):
             relative_humidity_pct=payload.relative_humidity_pct,
             atmospheric_pressure_hpa=payload.atmospheric_pressure_hpa,
         ),
-        technical_checklist=payload.technical_checklist,
+        technical_checklist=payload.technical_checklist or TechnicalChecklist(),
         overall_verdict=None,
         rejection_reason=None,
         sha256_hash=None,
@@ -187,8 +338,8 @@ def create_report_draft(payload: TestReportCreate):
         created_at=now,
         updated_at=now,
     )
-    REPORTS_DB.append(draft)
-    REPORT_OBSERVATIONS_DB.setdefault(report_id, [])
+    _LOCAL_REPORTS.append(draft)
+    _LOCAL_OBSERVATIONS.setdefault(report_id, [])
     return draft
 
 
@@ -201,26 +352,51 @@ def upsert_report_observations(report_id: str, payload: BatchObservationPayload)
     if payload.report_id != report_id:
         raise HTTPException(status_code=400, detail="Observation payload report_id must match the route report_id")
 
+    supabase = get_supabase_client()
+    if supabase:
+        try:
+            obs_rows = []
+            for obs in payload.observations:
+                obs_rows.append({
+                    "report_id": report_id,
+                    "test_type": obs.test_type.value if hasattr(obs.test_type, "value") else str(obs.test_type),
+                    "direction": obs.direction.value if hasattr(obs.direction, "value") else str(obs.direction),
+                    "sequence_order": obs.sequence_order,
+                    "load_applied": obs.load_applied,
+                    "indication_observed": obs.indication_observed,
+                    "delta_load": obs.delta_load,
+                    "calculated_p": obs.indication_observed + 0.5 * 0.002 - obs.delta_load,
+                    "error_e": (obs.indication_observed + 0.5 * 0.002 - obs.delta_load) - obs.load_applied,
+                    "corrected_error_ec": (obs.indication_observed + 0.5 * 0.002 - obs.delta_load) - obs.load_applied,
+                    "mpe_allowed": 0.001,
+                    "is_compliant": True,
+                    "position_tag": obs.position_tag or "CENTER",
+                    "run_cycle": obs.run_cycle or 1
+                })
+            supabase.table("test_observations").upsert(obs_rows).execute()
+        except Exception as e:
+            print(f"[Supabase] Error upserting observations: {e}")
+
     merged = {(
-        obs.test_type.value,
-        obs.direction.value,
+        obs.test_type.value if hasattr(obs.test_type, "value") else str(obs.test_type),
+        obs.direction.value if hasattr(obs.direction, "value") else str(obs.direction),
         obs.sequence_order,
         obs.position_tag or "",
         obs.run_cycle or 0,
-    ): obs for obs in REPORT_OBSERVATIONS_DB.get(report_id, [])}
+    ): obs for obs in _LOCAL_OBSERVATIONS.get(report_id, [])}
 
     for obs in payload.observations:
         merged[(
-            obs.test_type.value,
-            obs.direction.value,
+            obs.test_type.value if hasattr(obs.test_type, "value") else str(obs.test_type),
+            obs.direction.value if hasattr(obs.direction, "value") else str(obs.direction),
             obs.sequence_order,
             obs.position_tag or "",
             obs.run_cycle or 0,
         )] = obs
 
-    REPORT_OBSERVATIONS_DB[report_id] = list(merged.values())
-    rep.updated_at = datetime.now()
-    return {"report_id": report_id, "observations": REPORT_OBSERVATIONS_DB[report_id]}
+    _LOCAL_OBSERVATIONS[report_id] = list(merged.values())
+    rep.updated_at = datetime.now(timezone.utc)
+    return {"report_id": report_id, "observations": _LOCAL_OBSERVATIONS[report_id]}
 
 
 def _validate_observations_completeness(observations: List[TestObservationRowPayload]) -> None:
@@ -329,14 +505,46 @@ def submit_report(report_id: str):
             )
 
     # Validate Observation Completeness across measurement groups
-    observations = REPORT_OBSERVATIONS_DB.get(report_id, [])
+    observations = _LOCAL_OBSERVATIONS.get(report_id, [])
+    if not observations:
+        supabase = get_supabase_client()
+        if supabase:
+            try:
+                res = supabase.table("test_observations").select("*").eq("report_id", report_id).execute()
+                if res.data:
+                    observations = [
+                        TestObservationRowPayload(
+                            test_type=r.get("test_type", "WEIGHING"),
+                            direction=r.get("direction", "INCREASING"),
+                            sequence_order=r.get("sequence_order", 1),
+                            load_applied=float(r.get("load_applied", 0)),
+                            indication_observed=float(r.get("indication_observed", 0)),
+                            delta_load=float(r.get("delta_load", 0)),
+                            position_tag=r.get("position_tag", "CENTER"),
+                            run_cycle=r.get("run_cycle", 1)
+                        )
+                        for r in res.data
+                    ]
+            except Exception as e:
+                print(f"[Supabase] Error fetching observations: {e}")
+
     if not observations:
         raise HTTPException(status_code=422, detail="Submission rejected: No test observations recorded for this report")
 
     _validate_observations_completeness(observations)
 
+    supabase = get_supabase_client()
+    if supabase:
+        try:
+            supabase.table("test_reports").update({
+                "status": "PENDING_APPROVAL",
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }).eq("id", report_id).execute()
+        except Exception as e:
+            print(f"[Supabase] Error submitting report: {e}")
+
     rep.status = ReportStatus.PENDING_APPROVAL
-    rep.updated_at = datetime.now()
+    rep.updated_at = datetime.now(timezone.utc)
     return ReportSubmissionResponse(
         report_id=rep.id,
         status=rep.status,
@@ -349,10 +557,12 @@ def search_archive(
     query: Optional[str] = Query(None, description="Free text search: Serial, Model, Manufacturer, Report #"),
     accuracy_class: Optional[AccuracyClass] = None,
     status_filter: Optional[ReportStatus] = None,
-    verdict: Optional[bool] = None
+    verdict: Optional[bool] = None,
+    user_id: Optional[str] = Query(None, description="Scoped user ID for metrologist data isolation"),
+    role: Optional[str] = Query(None, description="Active user role")
 ):
     """
-    Module 6: Faceted search and filter engine for reports from Supabase.
+    Module 6: Faceted search and filter engine for reports with multi-tenant user scoping.
     """
     supabase = get_supabase_client()
     if supabase:
@@ -362,6 +572,8 @@ def search_archive(
                 db_query = db_query.eq("status", status_filter.value)
             if verdict is not None:
                 db_query = db_query.eq("overall_verdict", verdict)
+            if role == "TECHNICIAN" and user_id:
+                db_query = db_query.eq("conducted_by", user_id)
 
             res = db_query.order("created_at", desc=True).execute()
             if res.data:

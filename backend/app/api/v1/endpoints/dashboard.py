@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from typing import Optional
+from fastapi import APIRouter, Query
 from datetime import datetime, date, timedelta, timezone
 from app.schemas.dashboard import DashboardData, DashboardMetrics
 from app.schemas.reference_standard import ReferenceStandardOut
@@ -10,10 +11,13 @@ router = APIRouter()
 
 
 @router.get("/metrics", response_model=DashboardData)
-def get_dashboard_data():
+def get_dashboard_data(
+    user_id: Optional[str] = Query(None, description="Current authenticated user UUID"),
+    role: Optional[str] = Query(None, description="Current user role (TECHNICIAN, APPROVER, ADMIN)")
+):
     """
     Returns executive operational metrics, work queues, and expiring standards alerts
-    computed dynamically from Supabase database.
+    computed dynamically from Supabase database with multi-user isolation.
     """
     now = datetime.now(timezone.utc)
     today = date.today()
@@ -61,6 +65,7 @@ def get_dashboard_data():
                 for r in rep_res.data:
                     inst = r.get("instruments") or {}
                     rep_status = r.get("status", "DRAFT")
+                    conducted_by_id = str(r.get("conducted_by", ""))
                     created_at = datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")) if "created_at" in r else now
                     updated_at = datetime.fromisoformat(r["updated_at"].replace("Z", "+00:00")) if "updated_at" in r else now
 
@@ -79,7 +84,9 @@ def get_dashboard_data():
                     )
 
                     if rep_status in ("DRAFT", "REJECTED"):
-                        technician_work_queue.append(summary_item)
+                        # If user is a technician, only show their own draft tasks
+                        if role != "TECHNICIAN" or not user_id or conducted_by_id == user_id:
+                            technician_work_queue.append(summary_item)
                         active_evals += 1
                     elif rep_status == "PENDING_APPROVAL":
                         approver_work_queue.append(summary_item)

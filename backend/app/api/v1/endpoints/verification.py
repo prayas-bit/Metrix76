@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, Query
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from app.schemas.report import VerificationAction, ReportStatus
 from app.schemas.integrity import IntegritySeal, IntegrityVerifyRequest, IntegrityVerifyResponse
 from app.services.integrity import CryptoIntegrityService
+from app.core.supabase import get_supabase_client
 
 router = APIRouter()
 
@@ -26,9 +27,31 @@ def process_verification_action(report_id: str, payload: VerificationAction):
         test_dataset = {
             "report_id": report_id,
             "status": "APPROVED",
-            "approved_at": datetime.utcnow().isoformat()
+            "approved_at": datetime.now(timezone.utc).isoformat()
         }
         seal = CryptoIntegrityService.generate_integrity_seal(report_id, test_dataset)
+
+        supabase = get_supabase_client()
+        if supabase:
+            try:
+                supabase.table("test_reports").update({
+                    "status": "APPROVED",
+                    "approved_at": seal.timestamp.isoformat(),
+                    "sha256_hash": seal.sha256_hash,
+                    "overall_verdict": True
+                }).eq("id", report_id).execute()
+            except Exception as e:
+                print(f"[Supabase] Error approving report: {e}")
+
+        # Update in-memory fallback if present
+        from app.api.v1.endpoints.reports import _LOCAL_REPORTS
+        for r in _LOCAL_REPORTS:
+            if r.id == report_id:
+                r.status = ReportStatus.APPROVED
+                r.approved_at = seal.timestamp
+                r.sha256_hash = seal.sha256_hash
+                r.overall_verdict = True
+                break
 
         return {
             "report_id": report_id,
@@ -46,6 +69,26 @@ def process_verification_action(report_id: str, payload: VerificationAction):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Mandatory rejection remarks are required when returning report."
             )
+
+        supabase = get_supabase_client()
+        if supabase:
+            try:
+                supabase.table("test_reports").update({
+                    "status": "REJECTED",
+                    "rejection_reason": payload.remarks,
+                    "overall_verdict": False
+                }).eq("id", report_id).execute()
+            except Exception as e:
+                print(f"[Supabase] Error rejecting report: {e}")
+
+        # Update in-memory fallback if present
+        from app.api.v1.endpoints.reports import _LOCAL_REPORTS
+        for r in _LOCAL_REPORTS:
+            if r.id == report_id:
+                r.status = ReportStatus.REJECTED
+                r.rejection_reason = payload.remarks
+                r.overall_verdict = False
+                break
 
         return {
             "report_id": report_id,

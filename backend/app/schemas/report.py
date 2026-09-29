@@ -42,6 +42,7 @@ class TestReportCreate(BaseModel):
     relative_humidity_pct: float
     atmospheric_pressure_hpa: Optional[float] = 1013.25
     technical_checklist: TechnicalChecklist = TechnicalChecklist()
+    conducted_by: Optional[str] = None
 
 class TestObservationRowPayload(BaseModel):
     test_type: TestType = TestType.WEIGHING

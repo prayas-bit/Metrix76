@@ -18,8 +18,13 @@ import {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Module 1: Dashboard API
-export async function getDashboardData(): Promise<DashboardData> {
-  const res = await fetch(`${API_BASE}/api/v1/dashboard/metrics`, { cache: 'no-store' });
+export async function getDashboardData(userId?: string, role?: string): Promise<DashboardData> {
+  const params = new URLSearchParams();
+  if (userId) params.append('user_id', userId);
+  if (role) params.append('role', role);
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/api/v1/dashboard/metrics${queryStr}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Dashboard API error: ${res.statusText}`);
   return res.json();
 }
@@ -28,6 +33,20 @@ export async function getDashboardData(): Promise<DashboardData> {
 export async function listReferenceStandards(): Promise<ReferenceStandard[]> {
   const res = await fetch(`${API_BASE}/api/v1/standards/`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Standards API error: ${res.statusText}`);
+  return res.json();
+}
+
+export async function createReferenceStandard(payload: any): Promise<ReferenceStandard> {
+  const res = await fetch(`${API_BASE}/api/v1/standards/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const detail = typeof err.detail === 'object' ? err.detail.message || JSON.stringify(err.detail) : err.detail;
+    throw new Error(detail || `Failed to register standard weight set (${res.statusText})`);
+  }
   return res.json();
 }
 
@@ -41,6 +60,20 @@ export async function checkStandardValidity(id: string): Promise<{ is_valid: boo
 export async function listInstruments(): Promise<Instrument[]> {
   const res = await fetch(`${API_BASE}/api/v1/instruments/`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Instruments API error: ${res.statusText}`);
+  return res.json();
+}
+
+export async function createInstrument(payload: any): Promise<Instrument> {
+  const res = await fetch(`${API_BASE}/api/v1/instruments/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const detail = typeof err.detail === 'object' ? err.detail.message || JSON.stringify(err.detail) : err.detail;
+    throw new Error(detail || `Failed to create instrument passport (${res.statusText})`);
+  }
   return res.json();
 }
 
@@ -144,11 +177,14 @@ export async function submitReportForReview(reportId: string): Promise<ReportSub
   return res.json();
 }
 
-export async function searchArchive(query?: string): Promise<TestReportSummary[]> {
-  const url = query
-    ? `${API_BASE}/api/v1/reports/archive?query=${encodeURIComponent(query)}`
-    : `${API_BASE}/api/v1/reports/archive`;
-  const res = await fetch(url, { cache: 'no-store' });
+export async function searchArchive(query?: string, userId?: string, role?: string): Promise<TestReportSummary[]> {
+  const params = new URLSearchParams();
+  if (query) params.append('query', query);
+  if (userId) params.append('user_id', userId);
+  if (role) params.append('role', role);
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/api/v1/reports/archive${queryStr}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Archive API error: ${res.statusText}`);
   return res.json();
 }
