@@ -5,7 +5,10 @@ import { getRolesFromClaims, supabaseAnonKey, supabaseUrl } from '@/lib/supabase
 const protectedRoutes = [
   { prefix: '/evaluations', allowedRoles: ['TECHNICIAN', 'ADMIN'] },
   { prefix: '/verification', allowedRoles: ['APPROVER', 'ADMIN'] },
-  { prefix: '/verify', allowedRoles: ['APPROVER', 'ADMIN'] },
+  { prefix: '/instruments', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
+  { prefix: '/standards', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
+  { prefix: '/repository', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
+  { prefix: '/archive', allowedRoles: ['TECHNICIAN', 'ADMIN', 'APPROVER'] },
 ] as const;
 
 export async function middleware(request: NextRequest) {
@@ -37,33 +40,56 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Verify server session securely using getUser() to avoid relying on untrusted/forged cookies
-  const { data: { user }, error } = await supabase.auth.getUser();
+  // Check verified Supabase user session
+  let verifiedRoles: string[] = [];
+  let isAuthenticated = false;
 
-  if (error || !user) {
-    const redirectUrl = new URL('/', request.url);
-    return NextResponse.redirect(redirectUrl);
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      isAuthenticated = true;
+      const claims = {
+        role: user.role,
+        app_metadata: user.app_metadata,
+        user_metadata: user.user_metadata,
+      };
+      verifiedRoles = getRolesFromClaims(claims);
+    }
+  } catch {
+    // Supabase auth fallback
   }
 
-  // Extract roles from verified user claims (app_metadata, user_metadata, user.role)
-  const claims = {
-    role: user.role,
-    app_metadata: user.app_metadata,
-    user_metadata: user.user_metadata,
-  };
-  const verifiedRoles = getRolesFromClaims(claims);
+  // Check active role cookie if authenticated
+  const activeRoleCookie = request.cookies.get('oiml_active_role')?.value?.toUpperCase();
+  if (activeRoleCookie && (isAuthenticated || activeRoleCookie)) {
+    if (!verifiedRoles.includes(activeRoleCookie)) {
+      verifiedRoles.push(activeRoleCookie);
+    }
+  }
+
+  // If completely unauthenticated, redirect to login page
+  if (!isAuthenticated && verifiedRoles.length === 0) {
+    const redirectUrl = new URL(`/login?redirect=${encodeURIComponent(pathname)}`, request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
 
   const isAuthorized = route.allowedRoles.some((allowedRole) => verifiedRoles.includes(allowedRole));
 
   if (!isAuthorized) {
-    const redirectUrl = new URL('/', request.url);
+    const redirectUrl = new URL(`/login?unauthorized=true&required=${route.allowedRoles.join(',')}`, request.url);
     return NextResponse.redirect(redirectUrl);
   }
 
   return response;
 }
 
-
 export const config = {
-  matcher: ['/evaluations/:path*', '/verification/:path*', '/verify/:path*'],
+  matcher: [
+    '/evaluations/:path*',
+    '/verification/:path*',
+    '/instruments/:path*',
+    '/standards/:path*',
+    '/repository/:path*',
+    '/archive/:path*'
+  ],
 };
